@@ -412,7 +412,7 @@ selection-background-color: rgb(77, 77, 77);</string>
                            </widget>
                           </item>
                           <item>
-                           <widget class="QLabel" name="authcode_label">
+                           <widget class="ClickableLabel" name="authcode_label">
                             <property name="minimumSize">
                              <size>
                               <width>102</width>
@@ -590,6 +590,13 @@ selection-background-color: rgb(77, 77, 77);</string>
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>ClickableLabel</class>
+   <extends>QLabel</extends>
+   <header>ClickableLabel.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../resource.qrc"/>
  </resources>

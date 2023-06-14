@@ -44,6 +44,10 @@ LoginWidget::LoginWidget(QWidget *parent)
 
 	refreshcode();
 
+	// connect authcode_label clicked signal to refreshcode slot
+	// connect(ui->authcode_label, SIGNAL(clicked()), this, SLOT(on_authcode_label_clicked()));
+	// Not need it, see https://stackoverflow.com/questions/29985844/why-is-my-mousepressevent-called-twice
+
 	OnlineUpdateDialog *onlineupdate = new OnlineUpdateDialog();
 	onlineupdate->get_version();
 }
@@ -363,4 +367,12 @@ void LoginWidget::on_pushButton_Login_clicked()
 LoginWidget::~LoginWidget()
 {
 	delete ui;
+}
+
+void LoginWidget::on_authcode_label_clicked()
+{
+    if (ui->lineEdit_username->text().isEmpty() || this->lineEdit_password->text().isEmpty()) {
+		return;
+	}
+	refreshcode();
 }

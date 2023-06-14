@@ -51,7 +51,11 @@ add_executable("${TARGET_NAME}"
                transformlistform/downloadlistform.ui
                transformlistform/transformlistform.ui
                transformlistform/uploadlistform.ui
-               resource.qrc)
+               resource.qrc
+               Login/ClickableLabel.cpp
+               )
+
+include_directories(Login)
 
 target_link_libraries("${TARGET_NAME}"
                       Qt5::Core
