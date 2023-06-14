@@ -165,10 +165,10 @@ void UploadOperation::generateMetadata(){
     QFileInfo fileinfo(this->plainfile);
     QString filename = fileinfo.fileName();
     long filesize = fileinfo.size();
-    QDateTime ctime = fileinfo.created();
-    QDateTime mtime = fileinfo.lastModified();
-    QDateTime lastaccesstime = fileinfo.lastRead();
-    QDateTime uploadtime = QDateTime::currentDateTime();
+    QString ctime = fileinfo.created().toString("yyyy-MM-dd hh:mm:ss");
+    QString mtime = fileinfo.lastModified().toString("yyyy-MM-dd hh:mm:ss");
+    QString lastaccesstime = fileinfo.lastRead().toString("yyyy-MM-dd hh:mm:ss");
+    QString uploadtime = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
     QString fileowner = username;
     QString plaintexthash = calcfilehash(this->plainfile,"sha256");
     QString ciphertexthash = calcfilehash(this->cipherfile,"sha256");
