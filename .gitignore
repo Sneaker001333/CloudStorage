@@ -15,7 +15,6 @@
 # Compiled Dynamic libraries
 *.so
 *.dylib
-*.dll
 
 # Fortran module files
 *.mod
@@ -24,11 +23,9 @@
 # Compiled Static libraries
 *.lai
 *.la
-*.a
 *.lib
 
 # Executables
-*.exe
 *.out
 *.app
 
@@ -53,18 +50,15 @@
 
 # Libraries
 *.lib
-*.a
 *.la
 *.lo
 
 # Shared objects (inc. Windows DLLs)
-*.dll
 *.so
 *.so.*
 *.dylib
 
 # Executables
-*.exe
 *.out
 *.app
 *.i*86
@@ -91,12 +85,10 @@ dkms.conf
 *.slo
 *.lo
 *.o
-*.a
 *.la
 *.lai
 *.so
 *.so.*
-*.dll
 *.dylib
 
 # Qt-es
@@ -156,3 +148,4 @@ CTestTestfile.cmake
 _deps
 
 .idea
+cmake-build-*
