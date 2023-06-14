@@ -71,7 +71,7 @@ void AuditAdminWidget::sendrequest(){
     config.setPeerVerifyMode(QSslSocket::VerifyNone);
     config.setProtocol(QSsl::TlsV1_2);
     request.setSslConfiguration(config);
-    request.setUrl(QUrl("https://10.10.71.22:9443/auditlogsearch"));
+    request.setUrl(QUrl("https://81.69.243.226:6500/auditlogsearch"));
     request.setRawHeader("Content-Type", "application/json");
     request.setRawHeader("sessionid", sessionid.toUtf8());
 
