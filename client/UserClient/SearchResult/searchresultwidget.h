@@ -24,7 +24,7 @@
 #include <QJsonParseError>
 #include <QJsonObject>
 #include <QJsonArray>
-#include "../global.h"
+#include "global.h"
 #include "../local_lineedit/local_lineedit.h"
 #include "../lib/include/cipherinterface.h"
 #include "../entities/filemetadata.h"

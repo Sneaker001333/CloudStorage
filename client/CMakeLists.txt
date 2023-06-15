@@ -16,12 +16,12 @@ find_package(Qt5 COMPONENTS
              test
              REQUIRED)
 
+add_subdirectory(Login)
 add_subdirectory(UserRegister)
 add_subdirectory(UserClient)
 add_subdirectory(SystemAdminClient)
 add_subdirectory(SecurityAdminClient)
 add_subdirectory(AuditAdminClient)
-add_subdirectory(Login)
 
 #if (WIN32 AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
 #    set(DEBUG_SUFFIX)

@@ -1,6 +1,7 @@
 #include "loginwidget.h"
 #include "ui_loginwidget.h"
 #include "OnlineUpdate/onlineupdatedialog.h"
+#include "securitycloudstorageclientwidget.h"
 
 LoginWidget::LoginWidget(QWidget *parent)
 	:
@@ -206,8 +207,8 @@ void LoginWidget::slot_replyFinished(QNetworkReply *reply)
 				qDebug() << "lastauthipaddress is " << lastauthipaddress;
 
 
-//				SecurityCloudStorageClientWidget *sccw = new SecurityCloudStorageClientWidget();
-//				sccw->show();
+				SecurityCloudStorageClientWidget *sccw = new SecurityCloudStorageClientWidget();
+				sccw->show();
 				this->hide();
 			}
 		}

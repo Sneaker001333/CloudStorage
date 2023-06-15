@@ -25,13 +25,12 @@
 
 
 #include "../lib/include/cipherinterface.h"
-#include "../global.h"
-#include "../inc/sha256.h"
-#include "../inc/aes_cbc.h"
-#include "../inc/base64_dec.h"
-#include "../inc/base64_enc.h"
+#include "global.h"
+#include "sha256.h"
+#include "aes_cbc.h"
+#include "base64_dec.h"
+#include "base64_enc.h"
 #include "../transformlistform/uploadlistform.h"
-#include "../global.h"
 
 #include <shellapi.h>
 

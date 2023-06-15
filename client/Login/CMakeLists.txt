@@ -11,7 +11,10 @@ add_executable("${TARGET_NAME}"
                OnlineUpdate/onlineupdateoperation.cpp
                opensource/sha256.c
                opensource/base64_enc.c
+               opensource/base64_dec.c
                opensource/hmac_sha256.c
+               opensource/aes_core.c
+               opensource/aes_cbc.c
                LocalLog/seccloudlog.cpp
                LocalLog/locallogdialog.cpp
                global.cpp
@@ -19,6 +22,8 @@ add_executable("${TARGET_NAME}"
                )
 
 include_directories(${CMAKE_CURRENT_LIST_DIR})
+include_directories(${CMAKE_CURRENT_LIST_DIR}/inc)
+include_directories(../UserClient)
 
 target_link_libraries("${TARGET_NAME}"
                       Qt5::Core
@@ -27,3 +32,27 @@ target_link_libraries("${TARGET_NAME}"
                       )
 
 
+add_custom_command(TARGET "${TARGET_NAME}" POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory
+                   "${CMAKE_CURRENT_LIST_DIR}/doctotext"
+                   #                   "$<TARGET_FILE_DIR:${PROJECT_NAME}>/doctotext"
+                   "${CMAKE_CURRENT_BINARY_DIR}/doctotext"
+                   COMMAND_EXPAND_LISTS
+                   )
+
+add_custom_command(TARGET "${TARGET_NAME}" POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory
+                   "${CMAKE_CURRENT_LIST_DIR}/dict"
+                   #                   "$<TARGET_FILE_DIR:${PROJECT_NAME}>/dict"
+                   "${CMAKE_CURRENT_BINARY_DIR}/dict"
+                   COMMAND_EXPAND_LISTS
+                   )
+
+add_custom_command(TARGET "${TARGET_NAME}" POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy
+                   "${CMAKE_CURRENT_LIST_DIR}/lib/CipherIndexLib.dll"
+                   "${CMAKE_CURRENT_LIST_DIR}/lib/YunLock.dll"
+                   #                   "$<TARGET_FILE_DIR:${PROJECT_NAME}>/"
+                   "${CMAKE_CURRENT_BINARY_DIR}/"
+                   COMMAND_EXPAND_LISTS
+                   )
