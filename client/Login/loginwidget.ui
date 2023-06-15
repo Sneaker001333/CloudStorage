@@ -20,12 +20,59 @@
    <string>LoginWidget</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../resource.qrc">
+   <iconset resource="resource.qrc">
     <normaloff>:/pic/resource/img/manager.ico</normaloff>:/pic/resource/img/manager.ico</iconset>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_9">
    <item>
     <layout class="QVBoxLayout" name="verticalLayout_9">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_12">
+       <item>
+        <widget class="QComboBox" name="comboBox">
+         <property name="font">
+          <font>
+           <family>楷体</family>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <item>
+          <property name="text">
+           <string>普通用户</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>安全审计员</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>系统管理员</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>安全保密管理员</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_12">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
      <item>
       <spacer name="verticalSpacer_5">
        <property name="orientation">
@@ -114,7 +161,7 @@
                     <string/>
                    </property>
                    <property name="pixmap">
-                    <pixmap resource="../resource.qrc">:/pic/resource/img/login/logo.png</pixmap>
+                    <pixmap resource="resource.qrc">:/pic/resource/img/login/logo.png</pixmap>
                    </property>
                    <property name="scaledContents">
                     <bool>true</bool>
@@ -512,7 +559,7 @@ selection-background-color: rgb(77, 77, 77);</string>
                          </size>
                         </property>
                         <property name="text">
-                         <string>重置</string>
+                         <string>注册</string>
                         </property>
                        </widget>
                       </item>
@@ -598,7 +645,7 @@ selection-background-color: rgb(77, 77, 77);</string>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../resource.qrc"/>
+  <include location="resource.qrc"/>
  </resources>
  <connections/>
 </ui>

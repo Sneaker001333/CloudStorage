@@ -2,6 +2,7 @@
 #include "ui_loginwidget.h"
 #include "OnlineUpdate/onlineupdatedialog.h"
 #include "securitycloudstorageclientwidget.h"
+#include "auditadminwidget.h"
 
 LoginWidget::LoginWidget(QWidget *parent)
 	:
@@ -207,8 +208,22 @@ void LoginWidget::slot_replyFinished(QNetworkReply *reply)
 				qDebug() << "lastauthipaddress is " << lastauthipaddress;
 
 
-				SecurityCloudStorageClientWidget *sccw = new SecurityCloudStorageClientWidget();
-				sccw->show();
+				if (0 == role.compare("普通用户")) {
+					qDebug() << "普通用户登录 ";
+					auto *sccw = new SecurityCloudStorageClientWidget();
+					sccw->show();
+				}
+				else if (0 == role.compare("安全审计员")) {
+					qDebug() << "安全审计员";
+					auto *auditAdminWidget = new AuditAdminWidget();
+					auditAdminWidget->show();
+				}
+				else if (0 == role.compare("系统管理员")) {
+					qDebug() << "系统管理员";
+				}
+				else if (0 == role.compare("安全保密管理员")) {
+					qDebug() << "安全保密管理员";
+				}
 				this->hide();
 			}
 		}
@@ -228,8 +243,6 @@ void LoginWidget::slot_provideAuthenication(QNetworkReply *reply, QAuthenticator
 
 void LoginWidget::slot_NetWorkError(QNetworkReply::NetworkError errorCode)
 {
-
-
 	if (nullptr != login_post_reply) {
 		login_post_reply->deleteLater();
 		login_post_reply = nullptr;
@@ -337,10 +350,11 @@ void LoginWidget::on_pushButton_Login_clicked()
 	QString username = ui->lineEdit_username->text();
 	QString password = this->lineEdit_password->text();
 	QString authcode = ui->authcode_lineedit->text();
-	//    QString role = "安全保密管理员";
-	//    QString role = "系统管理员";
-	//    QString role = "安全审计员";
-	QString role = "普通用户";
+//	QString role = "安全保密管理员";
+//	QString role = "系统管理员";
+//	QString role = "安全审计员";
+//	QString role = "普通用户";
+	QString role = ui->comboBox->currentText();
 
 
 	userlogin(username, password, role, authcode);
@@ -372,7 +386,7 @@ LoginWidget::~LoginWidget()
 
 void LoginWidget::on_authcode_label_clicked()
 {
-    if (ui->lineEdit_username->text().isEmpty() || this->lineEdit_password->text().isEmpty()) {
+	if (ui->lineEdit_username->text().isEmpty() || this->lineEdit_password->text().isEmpty()) {
 		return;
 	}
 	refreshcode();

@@ -17,9 +17,9 @@
 #include <QJsonParseError>
 
 #include "local_lineedit.h"
-#include "./inc/sha256.h"
-#include "./inc/base64_enc.h"
-#include "./auditentity.h"
+#include "sha256.h"
+#include "base64_enc.h"
+#include "auditentity.h"
 namespace Ui {
 class AuditAdminWidget;
 }

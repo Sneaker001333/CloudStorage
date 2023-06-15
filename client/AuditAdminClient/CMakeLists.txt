@@ -1,22 +1,7 @@
-set(TARGET_NAME "auditAdminClient")
-add_executable("${TARGET_NAME}"
+set(TARGET_NAME "login")
+target_sources("${TARGET_NAME}" PRIVATE
                auditentity.cpp
-               global.cpp
-               local_lineedit.cpp
-               main.cpp
                auditadminwidget.cpp
-               opensource/aes_cbc.c
-               opensource/aes_core.c
-               opensource/base64_dec.c
-               opensource/base64_enc.c
-               opensource/des.c
-               opensource/hmac_md5.c
-               opensource/hmac_sha1.c
-               opensource/hmac_sha256.c
-               opensource/md5.c
-               opensource/rijndeal.c
-               opensource/sha1.c
-               opensource/sha256.c
                auditadminwidget.ui
                resource.qrc
                )

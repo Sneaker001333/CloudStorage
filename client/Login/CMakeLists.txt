@@ -23,7 +23,9 @@ add_executable("${TARGET_NAME}"
 
 include_directories(${CMAKE_CURRENT_LIST_DIR})
 include_directories(${CMAKE_CURRENT_LIST_DIR}/inc)
+include_directories(${CMAKE_CURRENT_LIST_DIR}/local_lineedit)
 include_directories(../UserClient)
+include_directories(../AuditAdminClient)
 
 target_link_libraries("${TARGET_NAME}"
                       Qt5::Core

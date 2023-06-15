@@ -318,9 +318,9 @@ void UserRegisterWidget::on_register_pushButton_clicked()
         qDebug()<<Q_FUNC_INFO<<"base64digeststr is "<<base64digeststr;
 
 //        QString role = "安全保密管理员";
-//         QString role = "系统管理员";
+         QString role = "系统管理员";
 //        QString role = "安全审计员";
-        QString role = "普通用户";
+//        QString role = "普通用户";
 
         userRegister(username,base64digeststr,role);
     }
