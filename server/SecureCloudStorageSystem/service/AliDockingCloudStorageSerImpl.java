@@ -46,7 +46,7 @@ public class AliDockingCloudStorageSerImpl implements DockingCloudStorageSer {
         OSSObject getobject = ossClient.getObject(bucketname, fileuniqueid);
         InputStream is = getobject.getObjectContent();
         /* 关闭OSSClient。 */
-//        ossClient.shutdown();
+        //ossClient.shutdown();
         return is;
     }
 
