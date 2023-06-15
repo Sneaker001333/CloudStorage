@@ -9,14 +9,13 @@
 
 #include <QJsonParseError>
 
-#include "../inc/sha256.h"
-#include "../inc/base64_enc.h"
-#include "../inc/hmac_sha256.h"
-#include "../local_lineedit/local_lineedit.h"
-#include "../global.h"
-#include "../securitycloudstorageclientwidget.h"
-#include "../LocalLog/locallogdialog.h"
-#include "../LocalLog/seccloudlog.h"
+#include "./inc/sha256.h"
+#include "./inc/base64_enc.h"
+#include "./inc/hmac_sha256.h"
+#include "./local_lineedit/local_lineedit.h"
+#include "./global.h"
+#include "./LocalLog/locallogdialog.h"
+#include "./LocalLog/seccloudlog.h"
 
 
 namespace Ui

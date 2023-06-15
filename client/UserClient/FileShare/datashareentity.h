@@ -16,7 +16,7 @@
 #include <QJsonArray>
 #include <QThread>
 #include "./datashareentity.h"
-#include "../global.h"
+#include "global.h"
 #include <QPushButton>
 #include "../entities/filemetadata.h"
 #include "./cancelshare.h"

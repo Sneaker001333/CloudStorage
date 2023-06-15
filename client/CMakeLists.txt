@@ -16,6 +16,7 @@ find_package(Qt5 COMPONENTS
              test
              REQUIRED)
 
+add_subdirectory(Login)
 add_subdirectory(UserRegister)
 add_subdirectory(UserClient)
 add_subdirectory(SystemAdminClient)

@@ -32,7 +32,7 @@
 #include <QtNetwork/QNetworkReply>
 #include <QJsonParseError>
 #include <QLabel>
-#include "../global.h"
+#include "global.h"
 
 #include "../entities/localtreewidgetitem.h"
 #include "../entities/filemetadata.h"

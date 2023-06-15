@@ -16,7 +16,7 @@
 #include <QJsonArray>
 #include <QThread>
 #include "./datashareentity.h"
-#include "../global.h"
+#include "global.h"
 #include "../entities/filemetadata.h"
 
 class CancelShare : public QObject

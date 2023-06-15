@@ -1,5 +1,7 @@
 #include "loginwidget.h"
 #include "ui_loginwidget.h"
+#include "OnlineUpdate/onlineupdatedialog.h"
+#include "securitycloudstorageclientwidget.h"
 
 LoginWidget::LoginWidget(QWidget *parent)
 	:
@@ -342,7 +344,6 @@ void LoginWidget::on_pushButton_Login_clicked()
 
 
 	userlogin(username, password, role, authcode);
-
 }
 
 //void LoginWidget::keyReleaseEvent(QKeyEvent * event) {

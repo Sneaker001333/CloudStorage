@@ -19,7 +19,7 @@
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
 #include <QJsonParseError>
-#include "../global.h"
+#include "global.h"
 #include "../entities/filemetadata.h"
 #include "./datashareentity.h"
 namespace Ui {

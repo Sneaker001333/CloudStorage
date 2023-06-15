@@ -1,5 +1,4 @@
-#include "securitycloudstorageclientwidget.h"
-#include "./Login/loginwidget.h"
+#include "loginwidget.h"
 #include <QApplication>
 #include <QFile>
 
