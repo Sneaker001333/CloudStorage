@@ -1,5 +1,7 @@
-#include "auditadminwidget.h"
+﻿#include "auditadminwidget.h"
 #include "ui_auditadminwidget.h"
+#include "QDebug"
+#include "iostream"
 
 AuditAdminWidget::AuditAdminWidget(QWidget *parent) :
     QWidget(parent),
@@ -16,6 +18,10 @@ AuditAdminWidget::AuditAdminWidget(QWidget *parent) :
     ui->end_dateTimeEdit->setCalendarPopup(true);
     ui->start_dateTimeEdit->setDateTime(QDateTime::currentDateTime().addDays(-7));
     ui->end_dateTimeEdit->setDateTime(QDateTime::currentDateTime());
+
+
+
+
     if(nullptr==jumptopage_linedit){
         jumptopage_linedit = new Local_LineEdit();
         jumptopage_linedit->setValidator(new QIntValidator(1, 10000, this)); //1, 10000为输入的数字值范围
@@ -33,6 +39,8 @@ AuditAdminWidget::AuditAdminWidget(QWidget *parent) :
 
     audit_starttime = ui->start_dateTimeEdit->dateTime();
     audit_endtime =  ui->end_dateTimeEdit->dateTime();
+
+
     module = ui->opration_audit_search_block_comboBox->currentText();
     search_str = ui->search_username_lineEdit->text();
     current_page = this->jumptopage_linedit->text().toInt();
@@ -47,16 +55,14 @@ AuditAdminWidget::AuditAdminWidget(QWidget *parent) :
     ui->operation_audit_record_tableWidget->setEditTriggers ( QAbstractItemView::NoEditTriggers );//表格不可编辑
     //默认已某列排序
 
-
-
-    sendrequest();
+    sendrequest(2);
 }
 
 void AuditAdminWidget::slot_audit_jumptopage_linedit_focussed(bool stat){
     jumptopage_lineedit_focus = stat;
 }
 
-void AuditAdminWidget::sendrequest(){
+void AuditAdminWidget::sendrequest(int index){
     if (nullptr == manager) {
         manager = new QNetworkAccessManager(this);
         connect(manager, SIGNAL(finished(QNetworkReply*)),
@@ -72,6 +78,7 @@ void AuditAdminWidget::sendrequest(){
     config.setProtocol(QSsl::TlsV1_2);
     request.setSslConfiguration(config);
     request.setUrl(QUrl("https://81.69.243.226:6500/auditlogsearch"));
+//    request.setUrl(QUrl("https://127.0.0.1:9443/auditlogsearch"));
     request.setRawHeader("Content-Type", "application/json");
     request.setRawHeader("sessionid", sessionid.toUtf8());
 
@@ -79,7 +86,22 @@ void AuditAdminWidget::sendrequest(){
     messagejsonvar.insert("method", "auditlogsearch");
     messagejsonvar.insert("version", "1.0");
     QVariantMap requestvar;
-    requestvar.insert("auditlogrole", "系统管理员");
+
+//自己添加的代码：
+    switch(index){
+    case 0:
+        requestvar.insert("auditlogrole", "系统管理员");break;
+    case 1:
+        requestvar.insert("auditlogrole", "安全保密管理员");break;
+    case 2:
+        requestvar.insert("auditlogrole", "普通用户");break;
+    default:
+        qDebug()<<"error in  auditlogrole";
+    }
+//源代码
+//    requestvar.insert("auditlogrole", "系统管理员");
+
+
     requestvar.insert("fromtime", audit_starttime.toString("yyyy-MM-dd hh:mm:ss"));
     requestvar.insert("totime", audit_endtime.toString("yyyy-MM-dd hh:mm:ss"));
     requestvar.insert("user", search_str);
@@ -100,92 +122,385 @@ void AuditAdminWidget::sendrequest(){
 }
 
 
-void AuditAdminWidget::refreshview(){
-    ui->operation_audit_record_tableWidget->setRowCount(0);
-    ui->operation_audit_record_tableWidget->setRowCount(auditlog->size());
-    int addrow = 0;
-    if(nullptr!=auditlog){
+void AuditAdminWidget::refreshview(int index){
+    //更新代码：
+    switch (index) {
+    case 0:
+    {
+        ui->start_dateTimeEdit->setCalendarPopup(true);
+        ui->end_dateTimeEdit->setCalendarPopup(true);
+        ui->start_dateTimeEdit->setDateTime(QDateTime::currentDateTime().addDays(-7));
+        ui->end_dateTimeEdit->setDateTime(QDateTime::currentDateTime());
+        ui->start_dateTimeEdit->setCalendarPopup(true);
+        ui->end_dateTimeEdit->setCalendarPopup(true);
+        ui->start_dateTimeEdit->setDateTime(QDateTime::currentDateTime().addDays(-7));
+        ui->end_dateTimeEdit->setDateTime(QDateTime::currentDateTime());
 
-        QMapIterator<QString , AuditEntity*> list_result_iterater(*auditlog);
 
-        while (list_result_iterater.hasNext()) {
+        ui->operation_audit_record_tableWidget->setRowCount(0);
+        ui->operation_audit_record_tableWidget->setRowCount(auditlog->size());
+        int addrow = 0;
+        if(nullptr!=auditlog){
 
-            list_result_iterater.next();
-            AuditEntity* list_result_value= list_result_iterater.value();
+            QMapIterator<QString , AuditEntity*> list_result_iterater(*auditlog);
 
-            QTableWidgetItem *usernameitem = new QTableWidgetItem(list_result_value->getusername());
-            ui->operation_audit_record_tableWidget->setItem(addrow,0,usernameitem);
+            while (list_result_iterater.hasNext()) {
 
-            QTableWidgetItem *userroleitem = new QTableWidgetItem(list_result_value->getrole());
-            ui->operation_audit_record_tableWidget->setItem(addrow,1,userroleitem);
+                list_result_iterater.next();
+                AuditEntity* list_result_value= list_result_iterater.value();
 
-            QTableWidgetItem *ipaddressitem = new QTableWidgetItem(list_result_value->getipaddress());
-            ui->operation_audit_record_tableWidget->setItem(addrow,2,ipaddressitem);
+                QTableWidgetItem *usernameitem = new QTableWidgetItem(list_result_value->getusername());
+                ui->operation_audit_record_tableWidget->setItem(addrow,0,usernameitem);
 
-            QTableWidgetItem *methoditem = new QTableWidgetItem(list_result_value->getmethod());
-            ui->operation_audit_record_tableWidget->setItem(addrow,3,methoditem);
+                QTableWidgetItem *userroleitem = new QTableWidgetItem(list_result_value->getrole());
+                ui->operation_audit_record_tableWidget->setItem(addrow,1,userroleitem);
 
-            QTableWidgetItem *timeitem = new QTableWidgetItem(list_result_value->gettime().toString("yyyy-MM-dd HH:mm:ss"));
-            ui->operation_audit_record_tableWidget->setItem(addrow,4,timeitem);
+                QTableWidgetItem *ipaddressitem = new QTableWidgetItem(list_result_value->getipaddress());
+                ui->operation_audit_record_tableWidget->setItem(addrow,2,ipaddressitem);
 
-            QTableWidgetItem *moduleitem = new QTableWidgetItem(list_result_value->getmodule());
-            ui->operation_audit_record_tableWidget->setItem(addrow,5,moduleitem);
-            QTableWidgetItem *objectitem = new QTableWidgetItem(list_result_value->getobject());
-            ui->operation_audit_record_tableWidget->setItem(addrow,6,objectitem);
-            QTableWidgetItem *resultitem = new QTableWidgetItem(list_result_value->getresult());
-            ui->operation_audit_record_tableWidget->setItem(addrow,7,resultitem);
-            QTableWidgetItem *statusitem = new QTableWidgetItem(list_result_value->getstatus());
-            ui->operation_audit_record_tableWidget->setItem(addrow,8,statusitem);
-            ui->operation_audit_record_tableWidget->setColumnWidth(0, 100);
-            ui->operation_audit_record_tableWidget->setColumnWidth(1, 100);
-            ui->operation_audit_record_tableWidget->setColumnWidth(2, 150);
-            ui->operation_audit_record_tableWidget->setColumnWidth(3, 150);
-            ui->operation_audit_record_tableWidget->setColumnWidth(4, 150);
-            ui->operation_audit_record_tableWidget->setColumnWidth(5, 150);
-            ui->operation_audit_record_tableWidget->setColumnWidth(6, 150);
-            ui->operation_audit_record_tableWidget->setColumnWidth(7, 150);
-            ui->operation_audit_record_tableWidget->setColumnWidth(8, 150);
-            ui->operation_audit_record_tableWidget->setRowHeight(addrow,38);
-            //            }
-            addrow++;
-        }
-        ui->operation_audit_record_tableWidget->sortByColumn(4,Qt::DescendingOrder);
+                QTableWidgetItem *methoditem = new QTableWidgetItem(list_result_value->getmethod());
+                ui->operation_audit_record_tableWidget->setItem(addrow,3,methoditem);
 
-        int theendnumber = (current_page)*show_list_num;
-        if(theendnumber>totalauditlognumber){
-            theendnumber=totalauditlognumber;
-        }
+                QTableWidgetItem *timeitem = new QTableWidgetItem(list_result_value->gettime().toString("yyyy-MM-dd HH:mm:ss"));
+                ui->operation_audit_record_tableWidget->setItem(addrow,4,timeitem);
 
-        ui->audit_totalnum_label->setText(
-                    "显示"+QString::number((current_page-1)*show_list_num+1)
-                    +"-"+QString::number(theendnumber)+"，共"
-                    +QString::number(totalauditlognumber)+"条记录");
-        int total_page_audit_search =((totalauditlognumber)/show_list_num)+1;
+                QTableWidgetItem *moduleitem = new QTableWidgetItem(list_result_value->getmodule());
+                ui->operation_audit_record_tableWidget->setItem(addrow,5,moduleitem);
+                QTableWidgetItem *objectitem = new QTableWidgetItem(list_result_value->getobject());
+                ui->operation_audit_record_tableWidget->setItem(addrow,6,objectitem);
+                QTableWidgetItem *resultitem = new QTableWidgetItem(list_result_value->getresult());
+                ui->operation_audit_record_tableWidget->setItem(addrow,7,resultitem);
+                QTableWidgetItem *statusitem = new QTableWidgetItem(list_result_value->getstatus());
+                ui->operation_audit_record_tableWidget->setItem(addrow,8,statusitem);
+                ui->operation_audit_record_tableWidget->setColumnWidth(0, 100);
+                ui->operation_audit_record_tableWidget->setColumnWidth(1, 100);
+                ui->operation_audit_record_tableWidget->setColumnWidth(2, 150);
+                ui->operation_audit_record_tableWidget->setColumnWidth(3, 150);
+                ui->operation_audit_record_tableWidget->setColumnWidth(4, 150);
+                ui->operation_audit_record_tableWidget->setColumnWidth(5, 150);
+                ui->operation_audit_record_tableWidget->setColumnWidth(6, 150);
+                ui->operation_audit_record_tableWidget->setColumnWidth(7, 150);
+                ui->operation_audit_record_tableWidget->setColumnWidth(8, 150);
+                ui->operation_audit_record_tableWidget->setRowHeight(addrow,38);
+                //            }
+                addrow++;
+            }
+            ui->operation_audit_record_tableWidget->sortByColumn(4,Qt::DescendingOrder);
 
-        ui->all_audit_page_total_num_label->setText("共"+QString::number(total_page_audit_search)+"页");
+            int theendnumber = (current_page)*show_list_num;
+            if(theendnumber>totalauditlognumber){
+                theendnumber=totalauditlognumber;
+            }
 
-        jumptopage_linedit->setText(QString::number(current_page));
+            ui->audit_totalnum_label->setText(
+                        "显示"+QString::number((current_page-1)*show_list_num+1)
+                        +"-"+QString::number(theendnumber)+"，共"
+                        +QString::number(totalauditlognumber)+"条记录");
+            int total_page_audit_search =((totalauditlognumber)/show_list_num)+1;
 
-        if(current_page-1<=0){
-            ui->the_left_pushButton->setEnabled(false);
-            ui->to_left_pushButton->setEnabled(false);
-        }else{
-            ui->the_left_pushButton->setEnabled(true);
-            ui->to_left_pushButton->setEnabled(true);
-        }
+            ui->all_audit_page_total_num_label->setText("共"+QString::number(total_page_audit_search)+"页");
 
-        if(current_page-1>=total_page_audit_search-1){
-            ui->the_right_pushButton->setEnabled(false);
-            ui->to_right_pushButton->setEnabled(false);
-        }else{
-            ui->the_right_pushButton->setEnabled(true);
-            ui->to_right_pushButton->setEnabled(true);
+            jumptopage_linedit->setText(QString::number(current_page));
+
+            if(current_page-1<=0){
+                ui->the_left_pushButton->setEnabled(false);
+                ui->to_left_pushButton->setEnabled(false);
+            }else{
+                ui->the_left_pushButton->setEnabled(true);
+                ui->to_left_pushButton->setEnabled(true);
+            }
+
+            if(current_page-1>=total_page_audit_search-1){
+                ui->the_right_pushButton->setEnabled(false);
+                ui->to_right_pushButton->setEnabled(false);
+            }else{
+                ui->the_right_pushButton->setEnabled(true);
+                ui->to_right_pushButton->setEnabled(true);
+            }
         }
     }
+        break;
+    case 1:
+    {
+        ui->securityadmin_audit_start_dateTimeEdit->setCalendarPopup(true);
+        ui->end_dateTimeEdit->setCalendarPopup(true);
+        ui->securityadmin_audit_start_dateTimeEdit->setDateTime(QDateTime::currentDateTime().addDays(-7));
+        ui->end_dateTimeEdit->setDateTime(QDateTime::currentDateTime());
+        ui->securityadmin_audit_start_dateTimeEdit->setCalendarPopup(true);
+        ui->end_dateTimeEdit->setCalendarPopup(true);
+        ui->securityadmin_audit_start_dateTimeEdit->setDateTime(QDateTime::currentDateTime().addDays(-7));
+        ui->end_dateTimeEdit->setDateTime(QDateTime::currentDateTime());
+
+
+        ui->operation_audit_record_tableWidget_2->setRowCount(0);
+        ui->operation_audit_record_tableWidget_2->setRowCount(auditlog->size());
+        int addrow = 0;
+        if(nullptr!=auditlog){
+
+            QMapIterator<QString , AuditEntity*> list_result_iterater(*auditlog);
+
+            while (list_result_iterater.hasNext()) {
+
+                list_result_iterater.next();
+                AuditEntity* list_result_value= list_result_iterater.value();
+
+                QTableWidgetItem *usernameitem = new QTableWidgetItem(list_result_value->getusername());
+                ui->operation_audit_record_tableWidget_2->setItem(addrow,0,usernameitem);
+
+                QTableWidgetItem *userroleitem = new QTableWidgetItem(list_result_value->getrole());
+                ui->operation_audit_record_tableWidget_2->setItem(addrow,1,userroleitem);
+
+                QTableWidgetItem *ipaddressitem = new QTableWidgetItem(list_result_value->getipaddress());
+                ui->operation_audit_record_tableWidget_2->setItem(addrow,2,ipaddressitem);
+
+                QTableWidgetItem *methoditem = new QTableWidgetItem(list_result_value->getmethod());
+                ui->operation_audit_record_tableWidget_2->setItem(addrow,3,methoditem);
+
+                QTableWidgetItem *timeitem = new QTableWidgetItem(list_result_value->gettime().toString("yyyy-MM-dd HH:mm:ss"));
+                ui->operation_audit_record_tableWidget_2->setItem(addrow,4,timeitem);
+
+                QTableWidgetItem *moduleitem = new QTableWidgetItem(list_result_value->getmodule());
+                ui->operation_audit_record_tableWidget_2->setItem(addrow,5,moduleitem);
+                QTableWidgetItem *objectitem = new QTableWidgetItem(list_result_value->getobject());
+                ui->operation_audit_record_tableWidget_2->setItem(addrow,6,objectitem);
+                QTableWidgetItem *resultitem = new QTableWidgetItem(list_result_value->getresult());
+                ui->operation_audit_record_tableWidget_2->setItem(addrow,7,resultitem);
+                QTableWidgetItem *statusitem = new QTableWidgetItem(list_result_value->getstatus());
+                ui->operation_audit_record_tableWidget_2->setItem(addrow,8,statusitem);
+                ui->operation_audit_record_tableWidget_2->setColumnWidth(0, 100);
+                ui->operation_audit_record_tableWidget_2->setColumnWidth(1, 100);
+                ui->operation_audit_record_tableWidget_2->setColumnWidth(2, 150);
+                ui->operation_audit_record_tableWidget_2->setColumnWidth(3, 150);
+                ui->operation_audit_record_tableWidget_2->setColumnWidth(4, 150);
+                ui->operation_audit_record_tableWidget_2->setColumnWidth(5, 150);
+                ui->operation_audit_record_tableWidget_2->setColumnWidth(6, 150);
+                ui->operation_audit_record_tableWidget_2->setColumnWidth(7, 150);
+                ui->operation_audit_record_tableWidget_2->setColumnWidth(8, 150);
+                ui->operation_audit_record_tableWidget_2->setRowHeight(addrow,38);
+                //            }
+                addrow++;
+            }
+            ui->operation_audit_record_tableWidget_2->sortByColumn(4,Qt::DescendingOrder);
+
+            int theendnumber = (current_page)*show_list_num;
+            if(theendnumber>totalauditlognumber){
+                theendnumber=totalauditlognumber;
+            }
+
+            ui->audit_totalnum_label_2->setText(
+                        "显示"+QString::number((current_page-1)*show_list_num+1)
+                        +"-"+QString::number(theendnumber)+"，共"
+                        +QString::number(totalauditlognumber)+"条记录");
+            int total_page_audit_search =((totalauditlognumber)/show_list_num)+1;
+
+            ui->all_audit_page_total_num_label_2->setText("共"+QString::number(total_page_audit_search)+"页");
+
+            jumptopage_linedit->setText(QString::number(current_page));
+
+            if(current_page-1<=0){
+                ui->the_left_pushButton_2->setEnabled(false);
+                ui->to_left_pushButton_2->setEnabled(false);
+            }else{
+                ui->the_left_pushButton_2->setEnabled(true);
+                ui->to_left_pushButton_2->setEnabled(true);
+            }
+
+            if(current_page-1>=total_page_audit_search-1){
+                ui->the_right_pushButton->setEnabled(false);
+                ui->to_right_pushButton->setEnabled(false);
+            }else{
+                ui->the_right_pushButton_2->setEnabled(true);
+                ui->to_right_pushButton_2->setEnabled(true);
+            }
+        }
+    }
+        break;
+    case 2:
+    {
+        ui->start_dateTimeEdit_2->setCalendarPopup(true);
+        ui->end_dateTimeEdit->setCalendarPopup(true);
+        ui->start_dateTimeEdit_2->setDateTime(QDateTime::currentDateTime().addDays(-7));
+        ui->end_dateTimeEdit->setDateTime(QDateTime::currentDateTime());
+        ui->start_dateTimeEdit_2->setCalendarPopup(true);
+        ui->end_dateTimeEdit->setCalendarPopup(true);
+        ui->start_dateTimeEdit_2->setDateTime(QDateTime::currentDateTime().addDays(-7));
+        ui->end_dateTimeEdit->setDateTime(QDateTime::currentDateTime());
+
+
+        ui->operation_audit_record_tableWidget_3->setRowCount(0);
+        ui->operation_audit_record_tableWidget_3->setRowCount(auditlog->size());
+        int addrow = 0;
+        if(nullptr!=auditlog){
+
+            QMapIterator<QString , AuditEntity*> list_result_iterater(*auditlog);
+
+            while (list_result_iterater.hasNext()) {
+
+                list_result_iterater.next();
+                AuditEntity* list_result_value= list_result_iterater.value();
+
+                QTableWidgetItem *usernameitem = new QTableWidgetItem(list_result_value->getusername());
+                ui->operation_audit_record_tableWidget_3->setItem(addrow,0,usernameitem);
+
+                QTableWidgetItem *userroleitem = new QTableWidgetItem(list_result_value->getrole());
+                ui->operation_audit_record_tableWidget_3->setItem(addrow,1,userroleitem);
+
+                QTableWidgetItem *ipaddressitem = new QTableWidgetItem(list_result_value->getipaddress());
+                ui->operation_audit_record_tableWidget_3->setItem(addrow,2,ipaddressitem);
+
+                QTableWidgetItem *methoditem = new QTableWidgetItem(list_result_value->getmethod());
+                ui->operation_audit_record_tableWidget_3->setItem(addrow,3,methoditem);
+
+                QTableWidgetItem *timeitem = new QTableWidgetItem(list_result_value->gettime().toString("yyyy-MM-dd HH:mm:ss"));
+                ui->operation_audit_record_tableWidget_3->setItem(addrow,4,timeitem);
+
+                QTableWidgetItem *moduleitem = new QTableWidgetItem(list_result_value->getmodule());
+                ui->operation_audit_record_tableWidget_3->setItem(addrow,5,moduleitem);
+                QTableWidgetItem *objectitem = new QTableWidgetItem(list_result_value->getobject());
+                ui->operation_audit_record_tableWidget_3->setItem(addrow,6,objectitem);
+                QTableWidgetItem *resultitem = new QTableWidgetItem(list_result_value->getresult());
+                ui->operation_audit_record_tableWidget_3->setItem(addrow,7,resultitem);
+                QTableWidgetItem *statusitem = new QTableWidgetItem(list_result_value->getstatus());
+                ui->operation_audit_record_tableWidget_3->setItem(addrow,8,statusitem);
+                ui->operation_audit_record_tableWidget_3->setColumnWidth(0, 100);
+                ui->operation_audit_record_tableWidget_3->setColumnWidth(1, 100);
+                ui->operation_audit_record_tableWidget_3->setColumnWidth(2, 150);
+                ui->operation_audit_record_tableWidget_3->setColumnWidth(3, 150);
+                ui->operation_audit_record_tableWidget_3->setColumnWidth(4, 150);
+                ui->operation_audit_record_tableWidget_3->setColumnWidth(5, 150);
+                ui->operation_audit_record_tableWidget_3->setColumnWidth(6, 150);
+                ui->operation_audit_record_tableWidget_3->setColumnWidth(7, 150);
+                ui->operation_audit_record_tableWidget_3->setColumnWidth(8, 150);
+                ui->operation_audit_record_tableWidget_3->setRowHeight(addrow,38);
+                //            }
+                addrow++;
+            }
+            ui->operation_audit_record_tableWidget_3->sortByColumn(4,Qt::DescendingOrder);
+
+            int theendnumber = (current_page)*show_list_num;
+            if(theendnumber>totalauditlognumber){
+                theendnumber=totalauditlognumber;
+            }
+
+            ui->audit_totalnum_label_3->setText(
+                        "显示"+QString::number((current_page-1)*show_list_num+1)
+                        +"-"+QString::number(theendnumber)+"，共"
+                        +QString::number(totalauditlognumber)+"条记录");
+            int total_page_audit_search =((totalauditlognumber)/show_list_num)+1;
+
+            ui->all_audit_page_total_num_label_3->setText("共"+QString::number(total_page_audit_search)+"页");
+
+            jumptopage_linedit->setText(QString::number(current_page));
+
+            if(current_page-1<=0){
+                ui->the_left_pushButton_3->setEnabled(false);
+                ui->to_left_pushButton_3->setEnabled(false);
+            }else{
+                ui->the_left_pushButton_3->setEnabled(true);
+                ui->to_left_pushButton_3->setEnabled(true);
+            }
+
+            if(current_page-1>=total_page_audit_search-1){
+                ui->the_right_pushButton_3->setEnabled(false);
+                ui->to_right_pushButton_3->setEnabled(false);
+            }else{
+                ui->the_right_pushButton_3->setEnabled(true);
+                ui->to_right_pushButton_3->setEnabled(true);
+            }
+        }
+    }
+        break;
+    default:
+        qDebug()<<"refreshview error!";
+    }
+
+//    源代码：
+//    ui->operation_audit_record_tableWidget->setRowCount(0);
+//    ui->operation_audit_record_tableWidget->setRowCount(auditlog->size());
+//    int addrow = 0;
+//    if(nullptr!=auditlog){
+
+//        QMapIterator<QString , AuditEntity*> list_result_iterater(*auditlog);
+
+//        while (list_result_iterater.hasNext()) {
+
+//            list_result_iterater.next();
+//            AuditEntity* list_result_value= list_result_iterater.value();
+
+//            QTableWidgetItem *usernameitem = new QTableWidgetItem(list_result_value->getusername());
+//            ui->operation_audit_record_tableWidget->setItem(addrow,0,usernameitem);
+
+//            QTableWidgetItem *userroleitem = new QTableWidgetItem(list_result_value->getrole());
+//            ui->operation_audit_record_tableWidget->setItem(addrow,1,userroleitem);
+
+//            QTableWidgetItem *ipaddressitem = new QTableWidgetItem(list_result_value->getipaddress());
+//            ui->operation_audit_record_tableWidget->setItem(addrow,2,ipaddressitem);
+
+//            QTableWidgetItem *methoditem = new QTableWidgetItem(list_result_value->getmethod());
+//            ui->operation_audit_record_tableWidget->setItem(addrow,3,methoditem);
+
+//            QTableWidgetItem *timeitem = new QTableWidgetItem(list_result_value->gettime().toString("yyyy-MM-dd HH:mm:ss"));
+//            ui->operation_audit_record_tableWidget->setItem(addrow,4,timeitem);
+
+//            QTableWidgetItem *moduleitem = new QTableWidgetItem(list_result_value->getmodule());
+//            ui->operation_audit_record_tableWidget->setItem(addrow,5,moduleitem);
+//            QTableWidgetItem *objectitem = new QTableWidgetItem(list_result_value->getobject());
+//            ui->operation_audit_record_tableWidget->setItem(addrow,6,objectitem);
+//            QTableWidgetItem *resultitem = new QTableWidgetItem(list_result_value->getresult());
+//            ui->operation_audit_record_tableWidget->setItem(addrow,7,resultitem);
+//            QTableWidgetItem *statusitem = new QTableWidgetItem(list_result_value->getstatus());
+//            ui->operation_audit_record_tableWidget->setItem(addrow,8,statusitem);
+//            ui->operation_audit_record_tableWidget->setColumnWidth(0, 100);
+//            ui->operation_audit_record_tableWidget->setColumnWidth(1, 100);
+//            ui->operation_audit_record_tableWidget->setColumnWidth(2, 150);
+//            ui->operation_audit_record_tableWidget->setColumnWidth(3, 150);
+//            ui->operation_audit_record_tableWidget->setColumnWidth(4, 150);
+//            ui->operation_audit_record_tableWidget->setColumnWidth(5, 150);
+//            ui->operation_audit_record_tableWidget->setColumnWidth(6, 150);
+//            ui->operation_audit_record_tableWidget->setColumnWidth(7, 150);
+//            ui->operation_audit_record_tableWidget->setColumnWidth(8, 150);
+//            ui->operation_audit_record_tableWidget->setRowHeight(addrow,38);
+//            //            }
+//            addrow++;
+//        }
+//        ui->operation_audit_record_tableWidget->sortByColumn(4,Qt::DescendingOrder);
+
+//        int theendnumber = (current_page)*show_list_num;
+//        if(theendnumber>totalauditlognumber){
+//            theendnumber=totalauditlognumber;
+//        }
+
+//        ui->audit_totalnum_label->setText(
+//                    "显示"+QString::number((current_page-1)*show_list_num+1)
+//                    +"-"+QString::number(theendnumber)+"，共"
+//                    +QString::number(totalauditlognumber)+"条记录");
+//        int total_page_audit_search =((totalauditlognumber)/show_list_num)+1;
+
+//        ui->all_audit_page_total_num_label->setText("共"+QString::number(total_page_audit_search)+"页");
+
+//        jumptopage_linedit->setText(QString::number(current_page));
+
+//        if(current_page-1<=0){
+//            ui->the_left_pushButton->setEnabled(false);
+//            ui->to_left_pushButton->setEnabled(false);
+//        }else{
+//            ui->the_left_pushButton->setEnabled(true);
+//            ui->to_left_pushButton->setEnabled(true);
+//        }
+
+//        if(current_page-1>=total_page_audit_search-1){
+//            ui->the_right_pushButton->setEnabled(false);
+//            ui->to_right_pushButton->setEnabled(false);
+//        }else{
+//            ui->the_right_pushButton->setEnabled(true);
+//            ui->to_right_pushButton->setEnabled(true);
+//        }
+//    }
 }
 
 void AuditAdminWidget::slot_replyFinished(QNetworkReply* reply){
-
+    qDebug()<<"slot_reolyFinished slot has been uesd!";
+    //qDebug()<<reply->readAll();
     QString ret_data;
     QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
     if(statusCode.isValid())
@@ -354,7 +669,22 @@ void AuditAdminWidget::slot_replyFinished(QNetworkReply* reply){
         qDebug() << Q_FUNC_INFO << "message is "<<message;
         qDebug() << Q_FUNC_INFO << "username is "<<username;
         qDebug() << Q_FUNC_INFO << "auditlog size is "<<auditlog->size();
-        refreshview();
+        //添加代码：
+        qDebug()<<"auditlogrole is: "<<auditlogrole;
+        if(!QString::compare(auditlogrole,"普通用户")){
+            refreshview(2);
+            qDebug()<<"reflash putongyonghu";
+        }
+        else if (!QString::compare(auditlogrole,"安全保密管理员")){
+            refreshview(1);
+                qDebug()<<"reflash anquanbaomi";
+        }
+        else{
+            refreshview(0);
+                qDebug()<<"reflash xitongguanliyuan";
+            }
+//源代码
+//        refreshview();
     }
 }
 void AuditAdminWidget::slot_sslErrors(QNetworkReply *reply, const QList<QSslError> &errors) {
@@ -381,3 +711,10 @@ AuditAdminWidget::~AuditAdminWidget()
 {
     delete ui;
 }
+
+void AuditAdminWidget::on_tabWidget_currentChanged(int index)
+{
+    sendrequest(index);
+}
+
+

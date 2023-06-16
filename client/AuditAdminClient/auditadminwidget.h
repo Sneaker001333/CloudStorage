@@ -1,4 +1,4 @@
-#ifndef AUDITADMINWIDGET_H
+﻿#ifndef AUDITADMINWIDGET_H
 #define AUDITADMINWIDGET_H
 
 #include <QWidget>
@@ -17,9 +17,9 @@
 #include <QJsonParseError>
 
 #include "local_lineedit.h"
-#include "sha256.h"
-#include "base64_enc.h"
-#include "auditentity.h"
+#include "./inc/sha256.h"
+#include "./inc/base64_enc.h"
+#include "./auditentity.h"
 namespace Ui {
 class AuditAdminWidget;
 }
@@ -43,6 +43,9 @@ public slots:
 
 
 
+private slots:
+    void on_tabWidget_currentChanged(int index);
+
 private:
     Ui::AuditAdminWidget *ui;
     Local_LineEdit *jumptopage_linedit {jumptopage_linedit=nullptr};
@@ -63,8 +66,8 @@ private:
 
     QNetworkAccessManager *manager{ manager = nullptr };
     QNetworkReply *post_reply{ post_reply = nullptr };
-    void sendrequest();
-    void refreshview();
+    void sendrequest(int index);
+    void refreshview(int index);
     QMap<QString , AuditEntity*> *auditlog{auditlog=nullptr};
 };
 
