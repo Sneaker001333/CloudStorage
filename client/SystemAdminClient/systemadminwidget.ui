@@ -428,22 +428,27 @@ color: rgb(0, 0, 0);</string>
                            <widget class="QListWidget" name="listWidget_3">
                             <item>
                              <property name="text">
-                              <string>系统CPU个数:4</string>
+                              <string>系统CPU个数：</string>
                              </property>
                             </item>
                             <item>
                              <property name="text">
-                              <string>JAVA版本：1.8.0_201-b09</string>
+                              <string>JAVA版本：</string>
                              </property>
                             </item>
                             <item>
                              <property name="text">
-                              <string>服务开始运行时间：2019-11-07 16:19:46</string>
+                              <string>服务开始运行时间：2023-06-16 16:19:46</string>
                              </property>
                             </item>
                             <item>
                              <property name="text">
-                              <string>端口：9443</string>
+                              <string>端口：</string>
+                             </property>
+                            </item>
+                            <item>
+                             <property name="text">
+                              <string>进程号：</string>
                              </property>
                             </item>
                            </widget>
@@ -589,17 +594,17 @@ color: rgb(0, 0, 0);</string>
                          <widget class="QListWidget" name="listWidget_2">
                           <item>
                            <property name="text">
-                            <string>JVM最大内存:2.14GB</string>
+                            <string>JVM最大内存：</string>
                            </property>
                           </item>
                           <item>
                            <property name="text">
-                            <string>JVM已使用内存大小: 152MB</string>
+                            <string>JVM已使用内存大小: </string>
                            </property>
                           </item>
                           <item>
                            <property name="text">
-                            <string>JVM可用内存大小：354MB</string>
+                            <string>JVM可用内存大小：</string>
                            </property>
                           </item>
                          </widget>
