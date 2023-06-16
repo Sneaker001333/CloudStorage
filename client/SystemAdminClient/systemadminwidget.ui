@@ -534,7 +534,7 @@ color: rgb(0, 0, 0);</string>
                           <item>
                            <widget class="QProgressBar" name="progressBar">
                             <property name="value">
-                             <number>26</number>
+                             <number>0</number>
                             </property>
                            </widget>
                           </item>
@@ -544,17 +544,17 @@ color: rgb(0, 0, 0);</string>
                          <widget class="QListWidget" name="listWidget">
                           <item>
                            <property name="text">
-                            <string>硬盘总空间: 37.68GB</string>
+                            <string>磁盘总空间：</string>
                            </property>
                           </item>
                           <item>
                            <property name="text">
-                            <string>硬盘已使用空间: 10.08GB</string>
+                            <string>磁盘已使用空间：</string>
                            </property>
                           </item>
                           <item>
                            <property name="text">
-                            <string>硬盘未使用空间: 27.6GB</string>
+                            <string>磁盘未使用空间：</string>
                            </property>
                           </item>
                          </widget>
@@ -579,7 +579,7 @@ color: rgb(0, 0, 0);</string>
                           <item>
                            <widget class="QProgressBar" name="progressBar_2">
                             <property name="value">
-                             <number>6</number>
+                             <number>0</number>
                             </property>
                            </widget>
                           </item>

@@ -99,10 +99,10 @@ void SystemAdminWidget::slot_replyFinished(QNetworkReply *reply)
 						}
 					}
 
-					ui->listWidget->clear();
-					ui->listWidget->addItem("磁盘总空间：" + dataConvert(total.toLongLong()));
-					ui->listWidget->addItem("磁盘已使用空间：" + dataConvert(total.toLongLong() - free.toLongLong()));
-					ui->listWidget->addItem("磁盘未使用空间：" + dataConvert(free.toLongLong()));
+					ui->listWidget->item(0)->setText("磁盘总空间：" + dataConvert(total.toLongLong()));
+					ui->listWidget->item(1)
+						->setText("磁盘已使用空间：" + dataConvert(total.toLongLong() - free.toLongLong()));
+					ui->listWidget->item(2)->setText("磁盘未使用空间：" + dataConvert(free.toLongLong()));
 					double percent = 1 - ((double)free.toLongLong()) / total.toLongLong();
 					qDebug() << Q_FUNC_INFO << "percent is " << percent;
 					ui->progressBar->setValue(percent * 100);
