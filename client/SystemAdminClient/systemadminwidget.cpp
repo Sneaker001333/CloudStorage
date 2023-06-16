@@ -1,3 +1,8 @@
+#include <QJsonParseError>
+#include <qdebug.h>
+#include <qmap.h>
+#include <qvariant.h>
+#include <stdio.h>
 #include "systemadminwidget.h"
 #include "ui_systemadminwidget.h"
 
@@ -7,6 +12,7 @@ SystemAdminWidget::SystemAdminWidget(QWidget *parent)
 	ui(new Ui::SystemAdminWidget)
 {
 	ui->setupUi(this);
+	system_audit();
 }
 
 void SystemAdminWidget::system_audit()
@@ -58,15 +64,51 @@ void SystemAdminWidget::slot_replyFinished(QNetworkReply *reply)
 	QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
 	if (statusCode.isValid())
 		qDebug() << Q_FUNC_INFO << "status code=" << statusCode.toInt();
-	QString method = "";
-	QString result = "";
-	QString code = "";
-	QString message = "";
 	QVariantMap details;
 	bool ifexist;
 	if (nullptr != reply) {
 		ret_data = reply->readAll();
 		qDebug() << Q_FUNC_INFO << "reply readAll is " << ret_data;
+
+		// 磁盘空间
+		if (reply->url().toString().contains("health")) {
+			QByteArray resultjsonbytearray;
+			QJsonParseError parseresult;
+			resultjsonbytearray.append(ret_data);
+			QJsonDocument parse_doucment = QJsonDocument::fromJson(resultjsonbytearray, &parseresult);
+			if (parseresult.error == QJsonParseError::NoError) {
+				if (parse_doucment.isObject()) {
+					QVariant total;
+					QVariant free;
+
+					details = parse_doucment.toVariant().toMap();
+					QMapIterator<QString, QVariant> iterater(details);
+					while (iterater.hasNext()) {
+						iterater.next();
+						QString iteraterkey = iterater.key();
+						QVariant iteratervalue = iterater.value();
+						if (iteraterkey == "details" || iteraterkey == "diskSpace") {
+							details = iteratervalue.toMap();
+							iterater = QMapIterator<QString, QVariant>(details);
+						}
+						else if (iteraterkey == "total") {
+							total = iteratervalue;
+						}
+						else if (iteraterkey == "free") {
+							free = iteratervalue;
+						}
+					}
+
+					ui->listWidget->clear();
+					ui->listWidget->addItem("磁盘总空间：" + dataConvert(total.toLongLong()));
+					ui->listWidget->addItem("磁盘已使用空间：" + dataConvert(total.toLongLong() - free.toLongLong()));
+					ui->listWidget->addItem("磁盘未使用空间：" + dataConvert(free.toLongLong()));
+					double percent = 1 - ((double)free.toLongLong()) / total.toLongLong();
+					qDebug() << Q_FUNC_INFO << "percent is " << percent;
+					ui->progressBar->setValue(percent * 100);
+				}
+			}
+		}
 	}
 }
 
@@ -108,4 +150,16 @@ void SystemAdminWidget::on_system_management_pushButton_clicked()
 	item = new QStandardItem("item2");
 	model->appendRow(item);
 //    ui->listView_2->setModel(model);
+}
+
+QString SystemAdminWidget::dataConvert(long long int data)
+{
+	double result = data;
+	QString units[] = {"B", "KB", "MB", "GB", "TB", "PB", "EB"};
+	int cnt = 0;
+	while (result > 100) {
+		result /= 1000;
+		cnt++;
+	}
+	return QString::number(result, 'g', 2) + units[cnt];
 }

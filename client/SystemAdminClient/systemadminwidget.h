@@ -44,7 +44,7 @@ private:
     QString password = "09bd600e-1094-4264-a885-204b7c0e1674";
 
     void  system_audit();
-
+	QString dataConvert(long long data);
 };
 
 #endif // SYSTEMADMINWIDGET_H

@@ -19,7 +19,6 @@ public:
 
 private slots:
     void on_pushButton_usermanagement_clicked();
-
     void on_pushButton_operation_audit_clicked();
 
 
