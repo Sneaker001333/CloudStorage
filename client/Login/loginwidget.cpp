@@ -1,8 +1,10 @@
 #include "loginwidget.h"
+#include "global.h"
 #include "ui_loginwidget.h"
 #include "OnlineUpdate/onlineupdatedialog.h"
 #include "securitycloudstorageclientwidget.h"
 #include "auditadminwidget.h"
+#include "userregisterwidget.h"
 
 LoginWidget::LoginWidget(QWidget *parent)
 	:
@@ -350,12 +352,7 @@ void LoginWidget::on_pushButton_Login_clicked()
 	QString username = ui->lineEdit_username->text();
 	QString password = this->lineEdit_password->text();
 	QString authcode = ui->authcode_lineedit->text();
-//	QString role = "安全保密管理员";
-//	QString role = "系统管理员";
-//	QString role = "安全审计员";
-//	QString role = "普通用户";
-	QString role = ui->comboBox->currentText();
-
+	QString role = role;
 
 	userlogin(username, password, role, authcode);
 }
@@ -390,4 +387,15 @@ void LoginWidget::on_authcode_label_clicked()
 		return;
 	}
 	refreshcode();
+}
+
+void LoginWidget::on_pushButton_clicked()
+{
+	auto userRegisterWidget = new UserRegisterWidget();
+	userRegisterWidget->show();
+}
+
+void LoginWidget::on_comboBox_activated(const QString &arg1)
+{
+	role = ui->comboBox->currentText();
 }

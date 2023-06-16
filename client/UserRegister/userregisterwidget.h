@@ -13,8 +13,9 @@
 #include <QJsonDocument>
 #include <QJsonParseError>
 #include "local_lineedit.h"
-#include "./inc/sha256.h"
-#include "./inc/base64_enc.h"
+#include "sha256.h"
+#include "base64_enc.h"
+#include "global.h"
 #include <string.h>
 
 #ifdef Q_OS_WIN

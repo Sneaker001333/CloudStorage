@@ -9,11 +9,11 @@
 
 #include <QJsonParseError>
 
-#include "./inc/sha256.h"
-#include "./inc/base64_enc.h"
-#include "./inc/hmac_sha256.h"
-#include "./local_lineedit/local_lineedit.h"
-#include "./global.h"
+#include "sha256.h"
+#include "base64_enc.h"
+#include "hmac_sha256.h"
+#include "local_lineedit.h"
+#include "global.h"
 #include "./LocalLog/locallogdialog.h"
 #include "./LocalLog/seccloudlog.h"
 
@@ -41,8 +41,9 @@ private slots:
 
 	void slot_password_linedit_focussed(bool);//口令1输入框获取或失去鼠标焦点出发的槽函数
 	void on_pushButton_Login_clicked();
+	void on_pushButton_clicked();
 	void on_authcode_label_clicked();
-
+    void on_comboBox_activated(const QString &arg1);
 
 private:
 	Ui::LoginWidget *ui;
