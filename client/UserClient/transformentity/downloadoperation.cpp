@@ -22,15 +22,23 @@ void DownloadOperation::DoSetup(QThread &cThread) {
 void DownloadOperation::slot_data_opeartion(){
 
 
-    if (!QDir(savepath).exists())
+    if (!QDir(file_path).exists())
     {
         QDir photoDir;
-        photoDir.mkdir(savepath);
+        photoDir.mkdir(file_path);
     }
 
     QString filename = this->downloadfilemetadata->getfilename();
 
-    file = new QFile(savepath + "/" + filename);
+    this->downloadfilemetadata->setsavepath(file_path + "/" + filename);
+
+    file = new QFile(file_path + "/" + filename);
+
+    if(file->exists()){
+        qDebug()<<Q_FUNC_INFO<<"FILE is "<<file_path + "/" + filename;
+        file->remove();
+    }
+
     if (!file->open(QIODevice::WriteOnly | QIODevice::Append))
     {
         //如果打开文件失败，则删除file，并使file指针为0，然后返回
@@ -285,11 +293,32 @@ void DownloadOperation::slot_getkey_replyFinished(QNetworkReply* reply){
 
 
         QString cipher_path = this->downloadfilemetadata->getfilename();
-        QString from_file_path = file_path +"/"+ cipher_path;
+        QString from_file_path = this->downloadfilemetadata->getsavepath();
 
         QString decrept_key(output); //32位解密密钥
 
-        QString decryptpath = "C:/user/Documents/decryptpath/plaintext.docx";//解密后的明文路径
+        QString currentrunpath = QCoreApplication::applicationDirPath();
+
+        QString decreptpath = currentrunpath+"/decrypt";
+
+        if (!QDir(decreptpath).exists())
+        {
+            QDir decreptDir;
+            decreptDir.mkdir(decreptpath);
+        }
+
+        QString filename = this->downloadfilemetadata->getfilename();
+
+
+        QString decryptpath = decreptpath+"/"+filename;//解密后的明文路径
+
+
+        qDebug()<<Q_FUNC_INFO<<"密文文件路径："<<from_file_path;
+
+        qDebug()<<Q_FUNC_INFO<<"解密后明文的路径："<<decryptpath;
+
+        qDebug()<<Q_FUNC_INFO<<"解密密钥： "<<decrept_key;
+
 
         string decrypt_ret =  YunLock_DecryptFile
                 (from_file_path.toStdString(),

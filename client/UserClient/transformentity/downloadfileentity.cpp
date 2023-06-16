@@ -11,7 +11,7 @@ DownloadFileEntity::DownloadFileEntity(FileMetadata* downloadfilemetadata,QObjec
     this->downloadfilemetadata=downloadfilemetadata;
 
     if(nullptr==downloadoperation){
-        downloadoperation = new DownloadOperation("downloadpath",this->downloadfilemetadata);
+        downloadoperation = new DownloadOperation(file_path,this->downloadfilemetadata);
         connect(this, SIGNAL(signal_downloadopeartion_begin()),
                 downloadoperation, SLOT(slot_data_opeartion()));
 

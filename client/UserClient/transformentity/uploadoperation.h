@@ -45,6 +45,9 @@ public:
     void uploaddata();
     void aes_cbc_pkcs5_encrypt(char* key , int keylen , char* pcInput, int nLen, char* pcOut);
 
+
+    void uploadotherdata(QString,QString,QString,QString,QString);
+
 signals:
     void setstat(QString);
     void toSetProgressBar(int);
@@ -61,6 +64,14 @@ public slots:
     void slot_provideAuthenication(QNetworkReply* reply, QAuthenticator* authenticator);
     void slot_NetWorkError(QNetworkReply::NetworkError);
     void progressChanged(qint64 progress, qint64 total);
+
+
+
+    void slot_otherdata_replyFinished(QNetworkReply* reply);
+    void slot_otherdata_sslErrors(QNetworkReply *reply, const QList<QSslError> &errors);
+    void slot_otherdata_provideAuthenication(QNetworkReply* reply, QAuthenticator* authenticator);
+    void slot_otherdata_NetWorkError(QNetworkReply::NetworkError);
+
 private:
     QString parentid;
     QString plainfile;
@@ -80,6 +91,12 @@ private:
     QNetworkReply *post_reply{ post_reply = nullptr };
     /*	缓冲区大小*/
     #define BUFFER_SIZE 1024
+
+
+    QNetworkAccessManager *otherdatamanager{ otherdatamanager = nullptr };
+    QNetworkReply *otherdatapost_reply{ otherdatapost_reply = nullptr };
+
+
 
 
 };

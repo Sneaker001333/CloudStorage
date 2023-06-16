@@ -61,6 +61,9 @@ bool FileMetadata::getifsheared(){
     return this->ifsheared;
 }
 
+QString FileMetadata::getsavepath(){
+    return this->savepath;
+}
 
 void FileMetadata::setfilename(QString filename){
     this->filename=filename;
@@ -105,6 +108,11 @@ void FileMetadata::setfileuniqueid(QString fileuniqueid){
 void FileMetadata::settype(QString type){
     this->type=type;
 }
+
+void FileMetadata::setsavepath(QString savepath){
+    this->savepath=savepath;
+}
+
 
 void FileMetadata::setcurrentid(QString currentid){
     this->currentid=currentid;

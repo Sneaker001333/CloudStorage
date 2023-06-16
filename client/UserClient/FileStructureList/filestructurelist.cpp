@@ -275,25 +275,26 @@ void FileStructureList::batch_download()
 	}
 }
 
-void FileStructureList::refreshdownloadlistview()
-{
-	qDebug() << Q_FUNC_INFO << "in refreshdownloadlistview";
-	if (nullptr != downloadfilelist && downloadfilelist->size() > 0) {
-		QMap<QString, FileMetadata *>::const_iterator iterater = downloadfilelist->constBegin();
-		while (iterater != downloadfilelist->constEnd()) {
-			qDebug() << Q_FUNC_INFO << "in while";
-			QString downloadfilelistkey = iterater.key();
-			FileMetadata *downloadfilemetadata = iterater.value();
-			DownloadFileEntity *downloadfileentity = new DownloadFileEntity(downloadfilemetadata);
-			QListWidgetItem *downloaditem = downloadfileentity->getdownloaditem();
-			downloaditem->setSizeHint(QSize(downloaditem->sizeHint().width(), 60));
-			DownloadListForm *uploadlistform = downloadfileentity->getdownloadlistform();
-			this->downloadlist_widget->addItem(downloaditem);
-			this->downloadlist_widget->setItemWidget(downloaditem, uploadlistform);
-			downloadfileentity->start();
-			iterater++;
-		}
-	}
+
+void FileStructureList::refreshdownloadlistview(){
+    qDebug()<<Q_FUNC_INFO<<"in refreshdownloadlistview";
+    if (nullptr != downloadfilelist&&downloadfilelist->size() > 0) {
+        QMap<QString, FileMetadata*>::const_iterator iterater = downloadfilelist->constBegin();
+        while (iterater != downloadfilelist->constEnd()) {
+            qDebug()<<Q_FUNC_INFO<<"in while";
+            QString downloadfilelistkey = iterater.key();
+            FileMetadata* downloadfilemetadata = iterater.value();
+            DownloadFileEntity *downloadfileentity = new DownloadFileEntity(downloadfilemetadata);
+            QListWidgetItem *downloaditem= downloadfileentity->getdownloaditem();
+            downloaditem->setSizeHint(QSize(downloaditem->sizeHint().width(), 60));
+            DownloadListForm *uploadlistform = downloadfileentity->getdownloadlistform();
+            this->downloadlist_widget->addItem(downloaditem);
+            this->downloadlist_widget->setItemWidget(downloaditem, uploadlistform);
+            downloadfileentity->start();
+            iterater++;
+        }
+        downloadfilelist->clear();
+    }
 }
 
 QList<FileMetadata *> *FileStructureList::parse_json_array(QJsonArray &filelistarray)

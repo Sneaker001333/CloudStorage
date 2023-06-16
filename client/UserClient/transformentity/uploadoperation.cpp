@@ -109,6 +109,7 @@ void UploadOperation::generateCipherIndex(){
             frompath.endsWith(".odt", Qt::CaseInsensitive) ||
             frompath.endsWith(".ods", Qt::CaseInsensitive) ||
             frompath.endsWith(".odp", Qt::CaseInsensitive)||
+            frompath.endsWith(".html", Qt::CaseInsensitive)||
             frompath.endsWith(".odg", Qt::CaseInsensitive)
             ) {
         emit setstat("正在生成密文索引");
@@ -149,13 +150,16 @@ void UploadOperation::slot_qprogress_started() {
 void UploadOperation::slot_qprogress_finished(int exitCode, QProcess::ExitStatus exitStatus) {
     qDebug() << "Finished: " << exitCode <<"doc_plaintext length is "<<doc_plaintext.length();
 
-    string cipherindex = YunLock_GenerateCipherIndex(
-                doc_plaintext.toStdString(),
-                this->file_unique_id.toStdString());
+    if(nullptr!=doc_plaintext&&doc_plaintext.length()>0){
+        string cipherindex = YunLock_GenerateCipherIndex(
+                    doc_plaintext.toStdString(),
+                    this->file_unique_id.toStdString());
 
-    this->encrypted_index = QString::fromStdString(cipherindex);
-    qDebug()<<Q_FUNC_INFO<<encrypted_index;
-    emit setstat("密文索引生成完成");
+        this->encrypted_index = QString::fromStdString(cipherindex).trimmed().simplified().remove(QRegExp("\\s"));
+        qDebug()<<Q_FUNC_INFO<<encrypted_index;
+        emit setstat("密文索引生成完成");
+    }
+
     uploaddata();
 }
 
@@ -216,7 +220,7 @@ void UploadOperation::generateMetadata(){
     QByteArray json=jsonDoc.toJson();//QJsonDocument转QByteArray
     QString messagejsonstr(json);//QByteArray 转QString
 
-    metadata = messagejsonstr;
+    metadata = messagejsonstr.trimmed().simplified();
     emit setstat("数据元信息生成完成");
 
 }
@@ -308,14 +312,6 @@ void UploadOperation::uploaddata(){
     QFile *file = new QFile(this->cipherfile);
     QFileInfo fileinfo(this->cipherfile);
     file->open(QIODevice::ReadOnly);
-    filePart.setBodyDevice(file);//这里的file对象就是我们需要提交的文件，如果需要上传多个文件，我们就需要创建多个QHttpPart对象
-    filePart.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("application/octet-stream"));//这里我们上传的是图片
-    filePart.setHeader(QNetworkRequest::ContentDispositionHeader,
-                       QVariant("form-data; name=\"file\"; filename=\""+fileinfo.fileName()+"\""));//
-    filePart.setRawHeader("metadata",this->metadata.toUtf8());
-    filePart.setRawHeader("fileuniqueid",this->file_unique_id.toUtf8());
-    filePart.setRawHeader("encrypted_index",this->encrypted_index.toUtf8());
-
     QByteArray sessinkeyarray = sessionkey.toUtf8();
     char * key = sessinkeyarray.data();
     int keylen = sessinkeyarray.length();
@@ -332,18 +328,112 @@ void UploadOperation::uploaddata(){
                <<"inputlen is "<<inputlen
                  <<"outencryptkey is "<<outencryptkey;
 
-    filePart.setRawHeader("encryptkey",outencryptkey.toUtf8());
-    mMultiPart->append(filePart);
-    QUrl uploaddataurl(url+"dataupload");
-    QNetworkRequest request(uploaddataurl);
-    request.setRawHeader("sessionid", sessionid.toUtf8());
-    post_reply = manager->post(request,mMultiPart);
-    connect(post_reply, SIGNAL(error(QNetworkReply::NetworkError)),
-            this, SLOT(slot_NetWorkError(QNetworkReply::NetworkError)));
-    connect(post_reply, SIGNAL(uploadProgress(qint64, qint64)), this,
-            SLOT(progressChanged(qint64, qint64)));
+    QString contentheadstr="form-data; name=\"file\"; filename=\""+fileinfo.fileName()+"\"";
+    QString contenttypestr= "application/octet-stream";
+    long headersize =
+            contentheadstr.length()+
+            sessionid.toUtf8().length()+
+            this->metadata.toUtf8().length()+
+            this->file_unique_id.toUtf8().length()+
+            this->encrypted_index.toUtf8().length()+
+            outencryptkey.toUtf8().length();
+
+    qDebug()<<Q_FUNC_INFO<<"headersize is "<<headersize;
+
+    if(headersize<10000){//因为当头部超过10240的时候，服务端会有限制，所以这里限制头部为小于10000
+        filePart.setBodyDevice(file);//这里的file对象就是我们需要提交的文件，如果需要上传多个文件，我们就需要创建多个QHttpPart对象
+        filePart.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(contenttypestr));//这里我们上传的是图片
+        filePart.setHeader(QNetworkRequest::ContentDispositionHeader,
+                           QVariant(contentheadstr));
+        filePart.setRawHeader("metadata",this->metadata.toUtf8());
+        filePart.setRawHeader("fileuniqueid",this->file_unique_id.toUtf8());
+        filePart.setRawHeader("encrypted_index",this->encrypted_index.toUtf8());
+        filePart.setRawHeader("encryptkey",outencryptkey.toUtf8());
+        mMultiPart->append(filePart);
+        QUrl uploaddataurl(url+"dataupload");
+        QNetworkRequest request(uploaddataurl);
+        request.setRawHeader("sessionid", sessionid.toUtf8());
+        post_reply = manager->post(request,mMultiPart);
+        connect(post_reply, SIGNAL(error(QNetworkReply::NetworkError)),
+                this, SLOT(slot_NetWorkError(QNetworkReply::NetworkError)));
+        connect(post_reply, SIGNAL(uploadProgress(qint64, qint64)), this,
+                SLOT(progressChanged(qint64, qint64)));
+    }else{//当头部大于10240的时候，文件和元信息分别上传
+
+        filePart.setBodyDevice(file);//这里的file对象就是我们需要提交的文件，如果需要上传多个文件，我们就需要创建多个QHttpPart对象
+        filePart.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(contenttypestr));//这里我们上传的是图片
+        filePart.setHeader(QNetworkRequest::ContentDispositionHeader,
+                           QVariant(contentheadstr));
+        filePart.setRawHeader("fileuniqueid",this->file_unique_id.toUtf8());
+        mMultiPart->append(filePart);
+        QUrl uploaddataurl(url+"singledataupload");
+        QNetworkRequest request(uploaddataurl);
+        request.setRawHeader("sessionid", sessionid.toUtf8());
+        post_reply = manager->post(request,mMultiPart);
+        connect(post_reply, SIGNAL(error(QNetworkReply::NetworkError)),
+                this, SLOT(slot_NetWorkError(QNetworkReply::NetworkError)));
+        connect(post_reply, SIGNAL(uploadProgress(qint64, qint64)), this,
+                SLOT(progressChanged(qint64, qint64)));
+        uploadotherdata(
+                    sessionid,
+                    this->metadata,
+                    this->file_unique_id,
+                    this->encrypted_index,
+                    outencryptkey
+                    );
+
+    }
 }
 
+void UploadOperation::uploadotherdata(QString sessionid,
+                                      QString metadata,
+                                      QString file_unique_id,
+                                      QString encrypted_index,
+                                      QString outencryptkey
+                                      ){
+
+    if (nullptr == otherdatamanager) {
+        otherdatamanager = new QNetworkAccessManager(this);
+        connect(otherdatamanager, SIGNAL(finished(QNetworkReply*)),
+                this, SLOT(slot_otherdata_replyFinished(QNetworkReply*)));
+        connect(otherdatamanager, SIGNAL(sslErrors(QNetworkReply*, QList<QSslError>)),
+                this, SLOT(slot_otherdata_sslErrors(QNetworkReply*, QList<QSslError>)));
+        connect(otherdatamanager, SIGNAL(authenticationRequired(QNetworkReply*, QAuthenticator*)),
+                this, SLOT(slot_otherdata_provideAuthenication(QNetworkReply*, QAuthenticator*)));
+    }
+
+    QSslConfiguration config;
+    config.setPeerVerifyMode(QSslSocket::VerifyNone);
+    config.setProtocol(QSsl::TlsV1_2);
+
+
+    QUrl uploaddataurl(url+"otherdataupload");
+    QNetworkRequest request(uploaddataurl);
+    request.setSslConfiguration(config);
+    request.setRawHeader("sessionid", sessionid.toUtf8());
+    request.setRawHeader("Content-Type", "application/json");
+    QVariantMap var;
+    var.insert("method", "otherdataupload");
+    var.insert("version", "1.0");
+    var.insert("timestamp", QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss"));
+    QVariantMap requestvar;
+
+    requestvar.insert("metadata", metadata);
+    requestvar.insert("fileuniqueid", file_unique_id);
+    requestvar.insert("encryptedindex", encrypted_index);
+    requestvar.insert("outencryptkey", outencryptkey);
+
+    var.insert("request",requestvar);
+
+    QJsonObject obJct = QJsonObject::fromVariantMap(var);
+    QJsonDocument jsonDoc(obJct);
+    QByteArray json = jsonDoc.toJson();
+    QString messagejsonstr(json);
+    qDebug()<<Q_FUNC_INFO<<"messagejsonstr is "<<messagejsonstr;
+    otherdatapost_reply = otherdatamanager->post(request,messagejsonstr.toUtf8());
+    connect(otherdatapost_reply, SIGNAL(error(QNetworkReply::NetworkError)),
+            this, SLOT(slot_otherdata_NetWorkError(QNetworkReply::NetworkError)));
+}
 
 void UploadOperation::slot_replyFinished(QNetworkReply* reply){
     qDebug() << Q_FUNC_INFO << "in slot_replyFinished";
@@ -406,6 +496,50 @@ void UploadOperation::slot_NetWorkError(QNetworkReply::NetworkError errorCode) {
         manager = nullptr;
     }
 }
+
+
+void UploadOperation::slot_otherdata_replyFinished(QNetworkReply* reply){
+
+    qDebug() << Q_FUNC_INFO << "in slot_otherdata_replyFinished";
+    QString ret_data;
+    QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+    if(statusCode.isValid())
+        qDebug()<<Q_FUNC_INFO << "status code=" << statusCode.toInt();
+    QString method="";
+    QString result="";
+    QString code = "";
+    QString message = "";
+    QVariantMap details;
+    QString username;
+    if (nullptr != reply) {
+        ret_data = reply->readAll();
+        qDebug() << Q_FUNC_INFO << "reply readAll is " << ret_data;
+
+
+
+    }
+}
+
+void UploadOperation::slot_otherdata_sslErrors(QNetworkReply *reply, const QList<QSslError> &errors){
+    QSslCertificate sslcert = errors[0].certificate();
+    reply->ignoreSslErrors();
+}
+
+void UploadOperation::slot_otherdata_provideAuthenication(QNetworkReply* reply, QAuthenticator* authenticator){
+
+}
+
+void UploadOperation::slot_otherdata_NetWorkError(QNetworkReply::NetworkError){
+    if (nullptr != otherdatapost_reply) {
+        otherdatapost_reply->deleteLater();
+        otherdatapost_reply = nullptr;
+    }
+    if (nullptr != otherdatamanager) {
+        delete otherdatamanager;
+        otherdatamanager = nullptr;
+    }
+}
+
 
 void UploadOperation::aes_cbc_pkcs5_encrypt(char* key , int keylen , char* input, int inputlen, char* pcOut)
 {

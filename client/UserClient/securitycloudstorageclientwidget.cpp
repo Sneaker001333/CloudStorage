@@ -546,6 +546,7 @@ void SecurityCloudStorageClientWidget::on_fileupload_pushButton_clicked()
 			uploadentityhash->insert(plaintextpath, uploadfileentity);
 		}
 		refreshuploadlistview();
+        uploadentityhash->clear();
 	}
 #ifdef _SKLOIS_CONTENTSCROOL_DEBUG_
 
@@ -584,11 +585,11 @@ void SecurityCloudStorageClientWidget::refreshuploadlistview()
 
 void SecurityCloudStorageClientWidget::on_filedownload_pushButton_clicked()
 {
-	QString saveFileName = QFileDialog::getSaveFileName(
-		this, "save", "filename",
-		QString(tr("*")),
-		Q_NULLPTR,
-		QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+//    QString saveFileName = QFileDialog::getSaveFileName(
+//                this,"save","filename",
+//                QString(tr("*")),
+//                Q_NULLPTR,
+//                QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 
 	file_path = QFileDialog::getExistingDirectory(
 		this,

@@ -2,6 +2,8 @@
 #define OPERATIONWIDGET_H
 
 #include <QWidget>
+#include <QFileDialog>
+#include "global.h"
 
 namespace Ui {
 class OperationWidget;

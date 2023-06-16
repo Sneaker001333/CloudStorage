@@ -30,6 +30,7 @@ public:
     QString getparentid();
     bool getifsheared();
     bool getifopened();
+    QString getsavepath();
     QList<FileMetadata * > *getchildren();
     OperationWidget * getoperationwidget();
 
@@ -53,6 +54,7 @@ public:
     void setifsheared(bool);
     void setifopened(bool ifopened);
     void setchildren(QList<FileMetadata * > *children);
+    void setsavepath(QString);
 
     void setoperationwidget(OperationWidget *operationwidget);
 
@@ -84,6 +86,7 @@ private:
     QString parentid;
     bool ifsheared;
     bool ifopened;
+    QString savepath;
     QList<FileMetadata * > *children{children = nullptr};
     OperationWidget *operationwidget {operationwidget = nullptr};
 //    QObject *children{children =nullptr};

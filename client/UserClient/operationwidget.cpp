@@ -20,6 +20,21 @@ void OperationWidget::on_data_open_pushButton_clicked()
 
 void OperationWidget::on_data_download_pushButton_clicked()
 {
+
+    file_path = QFileDialog::getExistingDirectory(
+                this,
+                "请选择保存路径",
+                "./"
+                );
+    if(file_path.isEmpty())
+    {
+        return;
+    }
+    else
+    {
+        qDebug() << file_path << endl;
+    }
+
     emit signal_datadownload();
 }
 
