@@ -31,6 +31,8 @@ public class AuthConfiguration implements WebMvcConfigurer {
         loginRegistry.excludePathPatterns("/amazontest");
         loginRegistry.excludePathPatterns("/swifttest");
         loginRegistry.excludePathPatterns("/index.html");
+		
+        loginRegistry.excludePathPatterns("/monitor/*");
 
         loginRegistry.excludePathPatterns("/getcurrentversion");
 
