@@ -1,7 +1,6 @@
 #include <QJsonParseError>
 #include <QJsonObject>
 #include <qdatetime.h>
-#include <qdebug.h>
 #include <qjsonarray.h>
 #include <qjsonvalue.h>
 #include <qmap.h>
@@ -10,6 +9,7 @@
 #include <qvariant.h>
 #include "systemadminwidget.h"
 #include "ui_systemadminwidget.h"
+#include "global.h"
 
 SystemAdminWidget::SystemAdminWidget(QWidget *parent)
 	:
@@ -41,7 +41,7 @@ void SystemAdminWidget::system_audit()
 {
 	QNetworkRequest request;
 	QSslConfiguration config;
-	QString url = "https://81.69.243.226:6500/monitor/";
+	QString Url = url + "monitor/";
 	config.setPeerVerifyMode(QSslSocket::VerifyNone);
 	config.setProtocol(QSsl::TlsV1_2);
 	request.setSslConfiguration(config);
@@ -65,12 +65,12 @@ void SystemAdminWidget::system_audit()
 	request.setRawHeader("Authorization", authorizationstr.toUtf8());
 	if (init)
 		for (auto endpoint: init_endpoints) {
-			request.setUrl(QUrl(url + endpoint));
+			request.setUrl(QUrl(Url + endpoint));
 			post_reply = manager->get(request);
 		}
 	else
 		for (auto endpoint: endpoints) {
-			request.setUrl(QUrl(url + endpoint));
+			request.setUrl(QUrl(Url + endpoint));
 			post_reply = manager->get(request);
 		}
 

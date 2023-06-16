@@ -342,10 +342,10 @@ void UserRegisterWidget::on_register_pushButton_clicked()
 		QString base64digeststr = digest(password1);
 		qDebug() << Q_FUNC_INFO << "base64digeststr is " << base64digeststr;
 
-		QString role = role;
-		qDebug() << Q_FUNC_INFO << "role is " << role;
+		QString Role = role;
+		qDebug() << Q_FUNC_INFO << "role is " << Role;
 
-		userRegister(username, base64digeststr, role);
+		userRegister(username, base64digeststr, Role);
 	}
 }
 
@@ -365,7 +365,7 @@ void UserRegisterWidget::userRegister(QString username, QString password, QStrin
 	config.setPeerVerifyMode(QSslSocket::VerifyNone);
 	config.setProtocol(QSsl::TlsV1_2);
 	ur_request.setSslConfiguration(config);
-	ur_request.setUrl(QUrl("https://81.69.243.226:6500/userregister"));
+	ur_request.setUrl(QUrl(url + "userregister"));
 	ur_request.setRawHeader("Content-Type", "application/json");
 
 	QVariantMap messagejsonvar;

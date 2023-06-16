@@ -56,8 +56,8 @@ void SecurityAdminWidget::refresh_view()
 			ui->normaluser_tableWidget->setCellWidget(addrow, 1, list_result_value);
 			QTableWidgetItem *username = new QTableWidgetItem(list_result_value->getusername());
 			ui->normaluser_tableWidget->setItem(addrow, 2, username);
-			QTableWidgetItem *role = new QTableWidgetItem(list_result_value->getrole());
-			ui->normaluser_tableWidget->setItem(addrow, 3, role);
+			QTableWidgetItem *Role = new QTableWidgetItem(list_result_value->getrole());
+			ui->normaluser_tableWidget->setItem(addrow, 3, Role);
 
 			QTableWidgetItem *state = new QTableWidgetItem(list_result_value->getstate());
 			ui->normaluser_tableWidget->setItem(addrow, 4, state);

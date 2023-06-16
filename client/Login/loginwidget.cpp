@@ -5,6 +5,7 @@
 #include "securitycloudstorageclientwidget.h"
 #include "auditadminwidget.h"
 #include "userregisterwidget.h"
+#include "systemadminwidget.h"
 
 LoginWidget::LoginWidget(QWidget *parent)
 	:
@@ -222,6 +223,8 @@ void LoginWidget::slot_replyFinished(QNetworkReply *reply)
 				}
 				else if (0 == role.compare("系统管理员")) {
 					qDebug() << "系统管理员";
+					auto *systemAdminWidget = new SystemAdminWidget();
+					systemAdminWidget->show();
 				}
 				else if (0 == role.compare("安全保密管理员")) {
 					qDebug() << "安全保密管理员";
@@ -352,9 +355,9 @@ void LoginWidget::on_pushButton_Login_clicked()
 	QString username = ui->lineEdit_username->text();
 	QString password = this->lineEdit_password->text();
 	QString authcode = ui->authcode_lineedit->text();
-	QString role = role;
+	QString Role = role;
 
-	userlogin(username, password, role, authcode);
+	userlogin(username, password, Role, authcode);
 }
 
 //void LoginWidget::keyReleaseEvent(QKeyEvent * event) {

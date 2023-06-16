@@ -6,10 +6,7 @@
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
 #include <QStandardItemModel>
-#include "./inc/base64_enc.h"
-#include <string.h>
-#include <stdlib.h>
-#include <QDebug>
+#include "base64_enc.h"
 
 
 namespace Ui
