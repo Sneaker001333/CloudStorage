@@ -155,6 +155,8 @@ SecurityCloudStorageClientWidget::SecurityCloudStorageClientWidget(QWidget *pare
 			this->current_page,
 			this->page_size,
 			ui->downloadlist_listWidget);
+
+		connect(filestrulist,SIGNAL(filelist_refresh()),this,SLOT(on_refresh_pushButton_clicked()));
 	}
 
 

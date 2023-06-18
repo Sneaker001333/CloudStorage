@@ -258,6 +258,37 @@ void FileStructureList::slot_datadelete()
 	FileMetadata *entity = (FileMetadata *)sender();
 	qDebug() << Q_FUNC_INFO << "entity name is " << entity->getfilename();
 	qDebug() << Q_FUNC_INFO << "entity getfileuniqueid is " << entity->getfileuniqueid();
+
+	QNetworkRequest network_request;
+	QSslConfiguration config;
+	config.setPeerVerifyMode(QSslSocket::VerifyNone);
+	config.setProtocol(QSsl::TlsV1_2);
+	network_request.setSslConfiguration(config);
+	network_request.setUrl(QUrl(url + "datadelete"));
+
+	network_request.setRawHeader("sessionid", sessionid.toUtf8());
+	network_request.setRawHeader("Content-Type", "application/json");
+	QVariantMap messagejsonvar;
+	messagejsonvar.insert("method", "datadelete");
+	messagejsonvar.insert("version", "1.0");
+	messagejsonvar.insert("timestamp", QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+	QVariantMap requestvar;
+	requestvar.insert("fileuniqueid", entity->getfileuniqueid());
+	messagejsonvar.insert("request", requestvar);
+	QJsonObject obJct = QJsonObject::fromVariantMap(messagejsonvar);
+	QJsonDocument jsonDoc(obJct);
+	QByteArray json = jsonDoc.toJson();
+	QString messagejsonstr(json);
+	qDebug() << Q_FUNC_INFO << "messagejsonstr is " << messagejsonstr;
+	post_reply = net_manager->post(network_request, messagejsonstr.toUtf8());
+	connect(post_reply, SIGNAL(error(QNetworkReply::NetworkError)),
+			this, SLOT(slot_NetWorkError(QNetworkReply::NetworkError)));
+
+	downloadfilelist->remove(entity->getfileuniqueid());
+	if (downloadfilelist->size() > 0) {
+		refreshdownloadlistview();
+	}
+	emit filelist_refresh();
 }
 
 void FileStructureList::batch_download()
@@ -275,26 +306,26 @@ void FileStructureList::batch_download()
 	}
 }
 
-
-void FileStructureList::refreshdownloadlistview(){
-    qDebug()<<Q_FUNC_INFO<<"in refreshdownloadlistview";
-    if (nullptr != downloadfilelist&&downloadfilelist->size() > 0) {
-        QMap<QString, FileMetadata*>::const_iterator iterater = downloadfilelist->constBegin();
-        while (iterater != downloadfilelist->constEnd()) {
-            qDebug()<<Q_FUNC_INFO<<"in while";
-            QString downloadfilelistkey = iterater.key();
-            FileMetadata* downloadfilemetadata = iterater.value();
-            DownloadFileEntity *downloadfileentity = new DownloadFileEntity(downloadfilemetadata);
-            QListWidgetItem *downloaditem= downloadfileentity->getdownloaditem();
-            downloaditem->setSizeHint(QSize(downloaditem->sizeHint().width(), 60));
-            DownloadListForm *uploadlistform = downloadfileentity->getdownloadlistform();
-            this->downloadlist_widget->addItem(downloaditem);
-            this->downloadlist_widget->setItemWidget(downloaditem, uploadlistform);
-            downloadfileentity->start();
-            iterater++;
-        }
-        downloadfilelist->clear();
-    }
+void FileStructureList::refreshdownloadlistview()
+{
+	qDebug() << Q_FUNC_INFO << "in refreshdownloadlistview";
+	if (nullptr != downloadfilelist && downloadfilelist->size() > 0) {
+		QMap<QString, FileMetadata *>::const_iterator iterater = downloadfilelist->constBegin();
+		while (iterater != downloadfilelist->constEnd()) {
+			qDebug() << Q_FUNC_INFO << "in while";
+			QString downloadfilelistkey = iterater.key();
+			FileMetadata *downloadfilemetadata = iterater.value();
+			DownloadFileEntity *downloadfileentity = new DownloadFileEntity(downloadfilemetadata);
+			QListWidgetItem *downloaditem = downloadfileentity->getdownloaditem();
+			downloaditem->setSizeHint(QSize(downloaditem->sizeHint().width(), 60));
+			DownloadListForm *uploadlistform = downloadfileentity->getdownloadlistform();
+			this->downloadlist_widget->addItem(downloaditem);
+			this->downloadlist_widget->setItemWidget(downloaditem, uploadlistform);
+			downloadfileentity->start();
+			iterater++;
+		}
+		downloadfilelist->clear();
+	}
 }
 
 QList<FileMetadata *> *FileStructureList::parse_json_array(QJsonArray &filelistarray)

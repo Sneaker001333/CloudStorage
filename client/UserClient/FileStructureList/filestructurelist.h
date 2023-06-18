@@ -62,6 +62,8 @@ public:
     void refreshdownloadlistview();
 signals:
 
+	void filelist_refresh();
+
 public slots:
     void slot_replyFinished(QNetworkReply* reply);
     void slot_sslErrors(QNetworkReply *reply, const QList<QSslError> &errors);
