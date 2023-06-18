@@ -6,6 +6,7 @@
 #include "auditadminwidget.h"
 #include "userregisterwidget.h"
 #include "systemadminwidget.h"
+#include "securityadminwidget.h"
 
 LoginWidget::LoginWidget(QWidget *parent)
 	:
@@ -228,6 +229,8 @@ void LoginWidget::slot_replyFinished(QNetworkReply *reply)
 				}
 				else if (0 == role.compare("安全保密管理员")) {
 					qDebug() << "安全保密管理员";
+					auto *secAdminWidget = new SecurityAdminWidget();
+					secAdminWidget->show();
 				}
 				this->hide();
 			}

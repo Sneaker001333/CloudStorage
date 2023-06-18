@@ -28,6 +28,7 @@ include_directories(../UserClient)
 include_directories(../AuditAdminClient)
 include_directories(../UserRegister)
 include_directories(../SystemAdminClient)
+include_directories(../SecurityAdminClient)
 
 target_link_libraries("${TARGET_NAME}"
                       Qt5::Core
