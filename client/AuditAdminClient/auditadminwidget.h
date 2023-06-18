@@ -3,7 +3,6 @@
 
 #include <QWidget>
 #include <QDateTime>
-#include "global.h"
 #include "local_lineedit.h"
 #include <QDebug>
 #include <QProcess>
@@ -20,52 +19,52 @@
 #include "sha256.h"
 #include "base64_enc.h"
 #include "auditentity.h"
-namespace Ui {
+
+namespace Ui
+{
 class AuditAdminWidget;
 }
 
-class AuditAdminWidget : public QWidget
+class AuditAdminWidget: public QWidget
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-    explicit AuditAdminWidget(QWidget *parent = nullptr);
-    ~AuditAdminWidget();
+	explicit AuditAdminWidget(QWidget *parent = nullptr);
+	~AuditAdminWidget();
 
 public slots:
-    void slot_audit_jumptopage_linedit_focussed(bool);
+	void slot_audit_jumptopage_linedit_focussed(bool);
 
-    void slot_replyFinished(QNetworkReply* reply);
-    void slot_sslErrors(QNetworkReply *reply, const QList<QSslError> &errors);
-    void slot_provideAuthenication(QNetworkReply* reply, QAuthenticator* authenticator);
-    void slot_NetWorkError(QNetworkReply::NetworkError);
+	void slot_replyFinished(QNetworkReply *reply);
+	void slot_sslErrors(QNetworkReply *reply, const QList<QSslError> &errors);
+	void slot_provideAuthenication(QNetworkReply *reply, QAuthenticator *authenticator);
+	void slot_NetWorkError(QNetworkReply::NetworkError);
 
 
-
+private slots:
+	void on_tabWidget_currentChanged(int index);
 
 private:
-    Ui::AuditAdminWidget *ui;
-    Local_LineEdit *jumptopage_linedit {jumptopage_linedit=nullptr};
+	Ui::AuditAdminWidget *ui;
+	Local_LineEdit *jumptopage_linedit{jumptopage_linedit = nullptr};
 
-    QDateTime audit_starttime;
-    QDateTime audit_endtime;
-    QString search_str="";
-    QString module = "";
-    int show_list_num = 20; //每页最多显示行数
-    int current_page = 0; //当前页
-    int pagenumber = 0; //总页数
-    bool jumptopage_lineedit_focus = false; //页数跳转框是否被鼠标focus
+	QDateTime audit_starttime;
+	QDateTime audit_endtime;
+	QString search_str = "";
+	QString module = "";
+	int show_list_num = 20; //每页最多显示行数
+	int current_page = 0; //当前页
+	int pagenumber = 0; //总页数
+	bool jumptopage_lineedit_focus = false; //页数跳转框是否被鼠标focus
 
-    int totalauditlognumber=0;
+	int totalauditlognumber = 0;
 
-
-
-
-    QNetworkAccessManager *manager{ manager = nullptr };
-    QNetworkReply *post_reply{ post_reply = nullptr };
-    void sendrequest();
-    void refreshview();
-    QMap<QString , AuditEntity*> *auditlog{auditlog=nullptr};
+	QNetworkAccessManager *manager{manager = nullptr};
+	QNetworkReply *post_reply{post_reply = nullptr};
+	void sendrequest(int index);
+	void refreshview(int index);
+	QMap<QString, AuditEntity *> *auditlog{auditlog = nullptr};
 };
 
 #endif // AUDITADMINWIDGET_H

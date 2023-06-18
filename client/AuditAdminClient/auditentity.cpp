@@ -5,107 +5,97 @@ AuditEntity::AuditEntity()
 
 }
 
+int AuditEntity::getid()
+{
 
-int AuditEntity::getid(){
-
-    return id;
-
-}
-QDateTime AuditEntity::gettime(){
-
-    return time;
+	return id;
 
 }
-QString AuditEntity::getipaddress(){
+QDateTime AuditEntity::gettime()
+{
 
-    return ipaddress;
-
-}
-QString AuditEntity::getusername(){
-    return username;
-
+	return time;
 
 }
-QString AuditEntity::getrole(){
+QString AuditEntity::getipaddress()
+{
 
-    return role;
-
-}
-QString AuditEntity::getmethod(){
-    return method;
-
+	return ipaddress;
 
 }
-QString AuditEntity::getmodule(){
-    return module;
-
-
-}
-QString AuditEntity::getobject(){
-
-    return object;
+QString AuditEntity::getusername()
+{
+	return username;
 
 }
-QString AuditEntity::getresult(){
-
-    return  result;
-
-}
-QString AuditEntity::getstatus(){
-    return  status;
-
-
+QString AuditEntity::getrole()
+{
+	return this->role;
 }
 
-
-
-void AuditEntity::setid(int id){
-    this->id=id;
+QString AuditEntity::getmethod()
+{
+	return method;
 }
 
-void AuditEntity::settime(QDateTime time){
-
-    this->time=time;
-
+QString AuditEntity::getmodule()
+{
+	return module;
 }
 
-void AuditEntity::setipaddress(QString ipaddress){
-    this->ipaddress=ipaddress;
-
-
+QString AuditEntity::getobject()
+{
+	return object;
 }
-void AuditEntity::setusername(QString username){
-    this->username=username;
 
-
+QString AuditEntity::getresult()
+{
+	return result;
 }
-void  AuditEntity::setrole(QString role){
-
-    this->role=role;
-
+QString AuditEntity::getstatus()
+{
+	return status;
 }
-void   AuditEntity::setmethod(QString method){
 
-
-    this->method=method;
+void AuditEntity::setid(int id)
+{
+	this->id = id;
 }
-void  AuditEntity::setmodule(QString module){
 
-    this->module=module;
-
+void AuditEntity::settime(QDateTime time)
+{
+	this->time = time;
 }
-void  AuditEntity::setobject(QString object){
-    this->object=object;
 
-
+void AuditEntity::setipaddress(QString ipaddress)
+{
+	this->ipaddress = ipaddress;
 }
-void   AuditEntity::setresult(QString result ){
-
-    this->result=result;
-
+void AuditEntity::setusername(QString username)
+{
+	this->username = username;
 }
-void  AuditEntity::setstatus(QString status){
-
-    this->status=status;
-
+void AuditEntity::setrole(QString role)
+{
+	this->role = role;
+}
+void AuditEntity::setmethod(QString method)
+{
+	this->method = method;
+}
+void AuditEntity::setmodule(QString module)
+{
+	this->module = module;
+}
+void AuditEntity::setobject(QString object)
+{
+	this->object = object;
+}
+void AuditEntity::setresult(QString result)
+{
+	this->result = result;
+}
+void AuditEntity::setstatus(QString status)
+{
+	this->status = status;
 }
