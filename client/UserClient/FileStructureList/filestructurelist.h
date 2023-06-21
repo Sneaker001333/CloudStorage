@@ -32,14 +32,8 @@
 #include <QtNetwork/QNetworkReply>
 #include <QJsonParseError>
 #include <QLabel>
-#include "global.h"
 
-#include "../entities/localtreewidgetitem.h"
 #include "../entities/filemetadata.h"
-#include "../transformentity/downloadfileentity.h"
-#include "../transformentity/downloadoperation.h"
-#include "../transformlistform/downloadlistform.h"
-#include "../FileShare/filesharewidget.h"
 
 class FileStructureList : public QObject
 {
@@ -60,6 +54,7 @@ public:
 
     void batch_download();
     void refreshdownloadlistview();
+	QMap<QString,FileMetadata*> * downloadfilelist{downloadfilelist=nullptr};
 signals:
 
 	void filelist_refresh();
@@ -94,7 +89,6 @@ private:
 
     QListWidget *downloadlist_widget{downloadlist_widget=nullptr};
 
-    QMap<QString,FileMetadata*> * downloadfilelist{downloadfilelist=nullptr};
 
 };
 

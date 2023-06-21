@@ -5,6 +5,7 @@
 #include "./inc/base64_enc.h"
 #include "./inc/hmac_sha256.h"
 #include "./securitycloudstorageclientwidget.h"
+#include "transformentity/downloadoperation.h"
 // add necessary includes here
 
 class Testname : public QObject

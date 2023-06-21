@@ -1,6 +1,4 @@
-set(TARGET_NAME "login")
-
-add_executable("${TARGET_NAME}"
+add_executable("${PROJECT_NAME}"
                loginwidget.cpp
                loginwidget.ui
                ClickableLabel.cpp
@@ -21,6 +19,8 @@ add_executable("${TARGET_NAME}"
                resource.qrc
                )
 
+set_target_properties("${PROJECT_NAME}" PROPERTIES WIN32_EXECUTABLE $<CONFIG:Release>)
+
 include_directories(${CMAKE_CURRENT_LIST_DIR})
 include_directories(${CMAKE_CURRENT_LIST_DIR}/inc)
 include_directories(${CMAKE_CURRENT_LIST_DIR}/local_lineedit)
@@ -30,14 +30,14 @@ include_directories(../UserRegister)
 include_directories(../SystemAdminClient)
 include_directories(../SecurityAdminClient)
 
-target_link_libraries("${TARGET_NAME}"
+target_link_libraries("${PROJECT_NAME}"
                       Qt5::Core
                       Qt5::Widgets
                       Qt5::Network
                       )
 
 
-add_custom_command(TARGET "${TARGET_NAME}" POST_BUILD
+add_custom_command(TARGET "${PROJECT_NAME}" POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy_directory
                    "${CMAKE_CURRENT_LIST_DIR}/doctotext"
                    #                   "$<TARGET_FILE_DIR:${PROJECT_NAME}>/doctotext"
@@ -45,7 +45,7 @@ add_custom_command(TARGET "${TARGET_NAME}" POST_BUILD
                    COMMAND_EXPAND_LISTS
                    )
 
-add_custom_command(TARGET "${TARGET_NAME}" POST_BUILD
+add_custom_command(TARGET "${PROJECT_NAME}" POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy_directory
                    "${CMAKE_CURRENT_LIST_DIR}/dict"
                    #                   "$<TARGET_FILE_DIR:${PROJECT_NAME}>/dict"
@@ -53,7 +53,7 @@ add_custom_command(TARGET "${TARGET_NAME}" POST_BUILD
                    COMMAND_EXPAND_LISTS
                    )
 
-add_custom_command(TARGET "${TARGET_NAME}" POST_BUILD
+add_custom_command(TARGET "${PROJECT_NAME}" POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy
                    "${CMAKE_CURRENT_LIST_DIR}/lib/CipherIndexLib.dll"
                    "${CMAKE_CURRENT_LIST_DIR}/lib/YunLock.dll"
@@ -61,3 +61,7 @@ add_custom_command(TARGET "${TARGET_NAME}" POST_BUILD
                    "${CMAKE_CURRENT_BINARY_DIR}/"
                    COMMAND_EXPAND_LISTS
                    )
+
+install(FILES "${CMAKE_CURRENT_LIST_DIR}/lib/CipherIndexLib.dll"
+        "${CMAKE_CURRENT_LIST_DIR}/lib/YunLock.dll"
+        DESTINATION ${CMAKE_INSTALL_PREFIX})

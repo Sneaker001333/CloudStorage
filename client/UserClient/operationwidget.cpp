@@ -1,5 +1,6 @@
 #include "operationwidget.h"
 #include "ui_operationwidget.h"
+#include "global.h"
 
 OperationWidget::OperationWidget(QWidget *parent) :
     QWidget(parent),

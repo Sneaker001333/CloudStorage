@@ -1,4 +1,7 @@
 #include "filestructurelist.h"
+#include "global.h"
+#include "../transformentity/downloadfileentity.h"
+#include "../FileShare/filesharewidget.h"
 
 FileStructureList::FileStructureList(QObject *parent)
 	: QObject(parent)
@@ -352,6 +355,8 @@ QList<FileMetadata *> *FileStructureList::parse_json_array(QJsonArray &filelista
 		QString parentid;
 		bool ifshared;
 		bool ifopened;
+
+		qDebug()<<Q_FUNC_INFO<<"pobj is "<<pobj;
 
 		if (pobj.contains("id")) {
 			id = pobj.value("id").toInt();

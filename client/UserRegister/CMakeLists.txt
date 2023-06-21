@@ -1,10 +1,8 @@
-set(TARGET_NAME "login")
-
-TARGET_SOURCES("${TARGET_NAME}" PRIVATE
+TARGET_SOURCES("${PROJECT_NAME}" PRIVATE
                userregisterwidget.cpp
                )
 
-target_link_libraries("${TARGET_NAME}"
+target_link_libraries("${PROJECT_NAME}"
                       Qt5::Core
                       Qt5::Gui
                       Qt5::Network

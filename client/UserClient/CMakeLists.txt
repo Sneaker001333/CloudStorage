@@ -1,5 +1,4 @@
-set(TARGET_NAME "login")
-target_sources("${TARGET_NAME}" PRIVATE
+target_sources("${PROJECT_NAME}" PRIVATE
                FileShare/cancelshare.cpp
                FileShare/datashareentity.cpp
                FileShare/filesharewidget.cpp
@@ -29,7 +28,7 @@ target_sources("${TARGET_NAME}" PRIVATE
                transformlistform/uploadlistform.ui
                )
 
-target_link_libraries("${TARGET_NAME}"
+target_link_libraries("${PROJECT_NAME}"
                       Qt5::Core
                       Qt5::Widgets
                       Qt5::Network

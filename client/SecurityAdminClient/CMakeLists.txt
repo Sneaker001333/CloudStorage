@@ -1,5 +1,4 @@
-set(TARGET_NAME "login")
-target_sources("${TARGET_NAME}" PRIVATE
+target_sources("${PROJECT_NAME}" PRIVATE
                securityadminwidget.cpp
                userentitywidget.cpp
                securityadminwidget.ui
@@ -7,7 +6,7 @@ target_sources("${TARGET_NAME}" PRIVATE
                resource.qrc
                )
 
-target_link_libraries("${TARGET_NAME}"
+target_link_libraries("${PROJECT_NAME}"
                       Qt5::Core
                       Qt5::Widgets
                       Qt5::Network
