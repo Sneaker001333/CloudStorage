@@ -70,6 +70,8 @@ void LoginWidget::refreshcode()
 		connect(login_manager, SIGNAL(authenticationRequired(QNetworkReply * , QAuthenticator * )),
 				this, SLOT(slot_provideAuthenication(QNetworkReply * , QAuthenticator * )));
 	}
+
+	qDebug() << QSslSocket::supportsSsl() << QSslSocket::sslLibraryBuildVersionString() << QSslSocket::sslLibraryVersionString();
 	QNetworkRequest network_request;
 	QSslConfiguration config;
 	config.setPeerVerifyMode(QSslSocket::VerifyNone);
