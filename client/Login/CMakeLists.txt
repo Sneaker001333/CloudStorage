@@ -65,3 +65,7 @@ add_custom_command(TARGET "${PROJECT_NAME}" POST_BUILD
 install(FILES "${CMAKE_CURRENT_LIST_DIR}/lib/CipherIndexLib.dll"
         "${CMAKE_CURRENT_LIST_DIR}/lib/YunLock.dll"
         DESTINATION ${CMAKE_INSTALL_PREFIX})
+
+install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/doctotext"
+        "${CMAKE_CURRENT_LIST_DIR}/dict"
+        DESTINATION ${CMAKE_INSTALL_PREFIX})

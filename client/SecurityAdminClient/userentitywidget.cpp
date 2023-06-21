@@ -1,4 +1,5 @@
 #include "userentitywidget.h"
+#include "global.h"
 #include "ui_userentitywidget.h"
 #include "securityadminwidget.h"
 
@@ -83,9 +84,9 @@ void UserEntityWidget::sendrequest(QString username){
     config.setPeerVerifyMode(QSslSocket::VerifyNone);
     config.setProtocol(QSsl::TlsV1_2);
     request.setSslConfiguration(config);
-    request.setUrl(QUrl("https://81.69.243.226:6500/userdelete"));
+    request.setUrl(QUrl(url+"userdelete"));
     request.setRawHeader("Content-Type", "application/json");
-    request.setRawHeader("sessionid", "a8d45cb9fbec3a6c32bc076b68c929268adf6f4d302d026bcc64f1ee3b5e5f9b");
+    request.setRawHeader("sessionid", sessionid.toUtf8());
 
     QVariantMap messagejsonvar;
     messagejsonvar.insert("method", "userdelete");
